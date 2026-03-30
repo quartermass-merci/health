@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="theme-color" content="#0f0f13">
+  <link rel="manifest" href="manifest.json">
+  <link rel="apple-touch-icon" href="icons/icon-192.png">
+  <link rel="stylesheet" href="css/style.css">
+  <title>Metabolic Tracker</title>
+</head>
+<body>
+
+  <!-- Morning Mindset Modal -->
+  <div id="morning-modal" class="modal hidden">
+    <div class="modal-content morning-modal-content">
+      <div class="morning-greeting" id="morning-greeting"></div>
+      <div class="morning-quote" id="morning-quote"></div>
+      <div class="morning-sleep">
+        <p class="morning-sleep-label">How did you sleep?</p>
+        <div class="star-rating" id="sleep-stars">
+          <button class="star" data-value="1">&#9733;</button>
+          <button class="star" data-value="2">&#9733;</button>
+          <button class="star" data-value="3">&#9733;</button>
+          <button class="star" data-value="4">&#9733;</button>
+          <button class="star" data-value="5">&#9733;</button>
+        </div>
+      </div>
+      <button class="btn btn-primary btn-lg" id="morning-dismiss">Let's Go</button>
+    </div>
+  </div>
+
+  <!-- Craving Timer Modal -->
+  <div id="craving-modal" class="modal hidden">
+    <div class="modal-content craving-modal-content">
+      <div class="craving-timer-display" id="craving-timer-display">5:00</div>
+      <div class="craving-breath-text" id="craving-breath-text">Breathe in slowly...</div>
+      <div class="craving-progress-ring">
+        <svg viewBox="0 0 120 120">
+          <circle class="ring-bg" cx="60" cy="60" r="54"/>
+          <circle class="ring-fill" id="craving-ring" cx="60" cy="60" r="54"/>
+        </svg>
+      </div>
+      <button class="btn btn-outline" id="craving-cancel">I'm Good — Close</button>
+    </div>
+  </div>
+
+  <!-- First Run Setup -->
+  <div id="setup-screen" class="screen hidden">
+    <div class="setup-container">
+      <h1>Welcome to Your Transformation</h1>
+      <p class="setup-subtitle">Let's set up your protocol</p>
+      <div class="setup-field">
+        <label>Starting Weight (lbs)</label>
+        <input type="number" id="setup-start-weight" value="310" inputmode="decimal">
+      </div>
+      <div class="setup-field">
+        <label>Goal Weight (lbs)</label>
+        <input type="number" id="setup-goal-weight" value="250" inputmode="decimal">
+      </div>
+      <div class="setup-field">
+        <label>Start Date</label>
+        <input type="date" id="setup-start-date">
+      </div>
+      <button class="btn btn-primary btn-lg" id="setup-save">Begin Protocol</button>
+    </div>
+  </div>
+
+  <!-- Toast / Insight -->
+  <div id="insight-toast" class="toast hidden">
+    <div class="toast-icon" id="toast-icon"></div>
+    <div class="toast-message" id="toast-message"></div>
+  </div>
+
+  <!-- Main App -->
+  <div id="app" class="hidden">
+    <header class="app-header">
+      <h1 class="app-title" id="app-title">Dashboard</h1>
+      <div class="header-day-badge" id="header-day-badge">Day 1</div>
+    </header>
+
+    <main class="app-main">
+      <!-- Dashboard -->
+      <section id="section-dashboard" class="section active">
+        <div id="dashboard-phase" class="phase-banner"></div>
+        <div id="dashboard-cards" class="dashboard-grid"></div>
+      </section>
+
+      <!-- Track -->
+      <section id="section-track" class="section hidden">
+        <!-- Feeding Timer -->
+        <div id="track-feeding" class="track-card">
+          <h2 class="track-title">Feeding Window</h2>
+          <div class="feeding-status" id="feeding-status">
+            <div class="feeding-indicator" id="feeding-indicator"></div>
+            <div class="feeding-time" id="feeding-time"></div>
+            <div class="feeding-label" id="feeding-label"></div>
+          </div>
+          <div class="feeding-check hidden" id="feeding-check">
+            <p>Did you stay in your window today?</p>
+            <div class="btn-row">
+              <button class="btn btn-success btn-lg" data-feeding="yes">Yes</button>
+              <button class="btn btn-danger btn-lg" data-feeding="no">No</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Water -->
+        <div id="track-water" class="track-card">
+          <h2 class="track-title">Water Intake</h2>
+          <div class="water-display">
+            <div class="water-ring-container">
+              <svg class="water-ring" viewBox="0 0 120 120">
+                <circle class="ring-bg" cx="60" cy="60" r="54"/>
+                <circle class="ring-fill water-ring-fill" id="water-ring" cx="60" cy="60" r="54"/>
+              </svg>
+              <div class="water-ring-text">
+                <span class="water-amount" id="water-amount">0</span>
+                <span class="water-unit">/ 3000 ml</span>
+              </div>
+            </div>
+          </div>
+          <div class="btn-row">
+            <button class="btn btn-water" data-water="250">+250 ml</button>
+            <button class="btn btn-water" data-water="500">+500 ml</button>
+            <button class="btn btn-water-undo" data-water="-250">-250</button>
+          </div>
+        </div>
+
+        <!-- Weight -->
+        <div id="track-weight" class="track-card">
+          <h2 class="track-title">Daily Weight</h2>
+          <div class="weight-input-row">
+            <input type="number" id="weight-input" class="weight-input" inputmode="decimal" step="0.1" placeholder="lbs">
+            <button class="btn btn-primary" id="weight-log">Log</button>
+          </div>
+          <div id="weight-stats" class="weight-stats hidden"></div>
+          <div class="weight-chart-container">
+            <canvas id="weight-chart"></canvas>
+          </div>
+        </div>
+
+        <!-- Carbs -->
+        <div id="track-carbs" class="track-card">
+          <h2 class="track-title">Low-Carb Check</h2>
+          <div class="carb-streak" id="carb-streak">
+            <span class="streak-number" id="streak-number">0</span>
+            <span class="streak-label">day streak</span>
+          </div>
+          <p class="carb-question" id="carb-question">Did you stay low-carb today?</p>
+          <div class="btn-row">
+            <button class="btn btn-success btn-lg" data-carb="yes">&#10003; Yes</button>
+            <button class="btn btn-danger btn-lg" data-carb="no">&#10007; No</button>
+          </div>
+          <div class="carb-dots" id="carb-dots"></div>
+        </div>
+
+        <!-- Walking -->
+        <div id="track-walking" class="track-card">
+          <h2 class="track-title">Walking / NEAT</h2>
+          <div class="walking-display">
+            <div class="walking-progress-bar">
+              <div class="walking-progress-fill" id="walking-fill"></div>
+            </div>
+            <div class="walking-amount"><span id="walking-amount">0</span> / 150 min</div>
+          </div>
+          <div class="btn-row">
+            <button class="btn btn-walk" data-walk="15">+15m</button>
+            <button class="btn btn-walk" data-walk="30">+30m</button>
+            <button class="btn btn-walk" data-walk="45">+45m</button>
+            <button class="btn btn-walk" data-walk="60">+60m</button>
+          </div>
+        </div>
+
+        <!-- Sleep (if not done in morning) -->
+        <div id="track-sleep" class="track-card hidden">
+          <h2 class="track-title">Sleep Quality</h2>
+          <div class="star-rating star-rating-large" id="track-sleep-stars">
+            <button class="star" data-value="1">&#9733;</button>
+            <button class="star" data-value="2">&#9733;</button>
+            <button class="star" data-value="3">&#9733;</button>
+            <button class="star" data-value="4">&#9733;</button>
+            <button class="star" data-value="5">&#9733;</button>
+          </div>
+        </div>
+
+        <!-- PMR + NES Evening -->
+        <div id="track-evening" class="track-card">
+          <h2 class="track-title">Evening Check-in</h2>
+          <div class="pmr-section">
+            <p>Did you do PMR tonight?</p>
+            <button class="btn btn-success" id="pmr-done-btn">Done &#10003;</button>
+          </div>
+          <div class="nes-section" id="nes-section">
+            <p class="nes-title">Quick NES Check</p>
+            <label class="nes-check"><input type="checkbox" data-nes="ateAfterWindow"> Ate after 6 PM</label>
+            <label class="nes-check"><input type="checkbox" data-nes="needFoodToSleep"> Feel I need food to sleep</label>
+            <label class="nes-check"><input type="checkbox" data-nes="moodWorsening"> Mood worsened this evening</label>
+            <label class="nes-check"><input type="checkbox" data-nes="morningAnorexia"> No appetite this morning</label>
+            <div class="nes-warning hidden" id="nes-warning">&#9888; 3+ markers flagged — consider adjusting protocol</div>
+          </div>
+          <button class="btn btn-primary" id="evening-save">Save Evening Check-in</button>
+        </div>
+      </section>
+
+      <!-- Calendar -->
+      <section id="section-calendar" class="section hidden">
+        <div class="calendar-nav">
+          <button class="btn btn-icon" id="cal-prev">&larr;</button>
+          <span id="cal-month-label"></span>
+          <button class="btn btn-icon" id="cal-next">&rarr;</button>
+        </div>
+        <div class="calendar-legend">
+          <span class="legend-dot legend-green"></span> All done
+          <span class="legend-dot legend-amber"></span> Partial
+          <span class="legend-dot legend-red"></span> Missed
+          <span class="legend-dot legend-gray"></span> No data
+        </div>
+        <div class="calendar-grid" id="calendar-grid"></div>
+        <div class="calendar-detail hidden" id="calendar-detail"></div>
+      </section>
+
+      <!-- Settings -->
+      <section id="section-settings" class="section hidden">
+        <div class="settings-group">
+          <h2>Profile</h2>
+          <div class="settings-field">
+            <label>Starting Weight</label>
+            <input type="number" id="settings-start-weight" inputmode="decimal">
+          </div>
+          <div class="settings-field">
+            <label>Goal Weight</label>
+            <input type="number" id="settings-goal-weight" inputmode="decimal">
+          </div>
+          <div class="settings-field">
+            <label>Start Date</label>
+            <input type="date" id="settings-start-date">
+          </div>
+          <div class="settings-field">
+            <label>PMR Reminder Time</label>
+            <input type="time" id="settings-pmr-time" value="21:30">
+          </div>
+          <button class="btn btn-primary" id="settings-save">Save Settings</button>
+        </div>
+        <div class="settings-group">
+          <h2>Data</h2>
+          <button class="btn btn-outline" id="export-csv">Export CSV</button>
+          <button class="btn btn-outline" id="export-json">Export JSON</button>
+          <button class="btn btn-outline" id="import-json-btn">Import JSON</button>
+          <input type="file" id="import-json-file" accept=".json" class="hidden">
+          <p class="settings-note" id="last-backup-note"></p>
+        </div>
+        <div class="settings-group">
+          <h2>Danger Zone</h2>
+          <button class="btn btn-danger" id="clear-data">Clear All Data</button>
+        </div>
+      </section>
+    </main>
+
+    <!-- Craving FAB -->
+    <button class="craving-fab" id="craving-fab" title="5-min craving timer">
+      <span class="fab-icon">&#9201;</span>
+    </button>
+
+    <!-- Bottom Nav -->
+    <nav class="bottom-nav">
+      <button class="nav-btn active" data-section="dashboard">
+        <span class="nav-icon">&#9632;</span>
+        <span class="nav-label">Dashboard</span>
+      </button>
+      <button class="nav-btn" data-section="track">
+        <span class="nav-icon">&#10010;</span>
+        <span class="nav-label">Track</span>
+      </button>
+      <button class="nav-btn" data-section="calendar">
+        <span class="nav-icon">&#9783;</span>
+        <span class="nav-label">Calendar</span>
+      </button>
+      <button class="nav-btn" data-section="settings">
+        <span class="nav-icon">&#9881;</span>
+        <span class="nav-label">Settings</span>
+      </button>
+    </nav>
+  </div>
+
+  <script src="js/vendor/chart.min.js"></script>
+  <script type="module" src="js/store.js"></script>
+  <script type="module" src="js/insights.js"></script>
+  <script type="module" src="js/morning.js"></script>
+  <script type="module" src="js/feeding.js"></script>
+  <script type="module" src="js/water.js"></script>
+  <script type="module" src="js/weight.js"></script>
+  <script type="module" src="js/carbs.js"></script>
+  <script type="module" src="js/walking.js"></script>
+  <script type="module" src="js/craving.js"></script>
+  <script type="module" src="js/evening.js"></script>
+  <script type="module" src="js/phases.js"></script>
+  <script type="module" src="js/calendar.js"></script>
+  <script type="module" src="js/dashboard.js"></script>
+  <script type="module" src="js/app.js"></script>
+</body>
+</html>
