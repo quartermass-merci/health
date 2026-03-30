@@ -188,7 +188,7 @@
             <button class="btn btn-walk" data-walk="15">+15m</button>
             <button class="btn btn-walk" data-walk="30">+30m</button>
             <button class="btn btn-walk" data-walk="60">+60m</button>
-            <button class="btn btn-water-undo" id="walk-undo">undo</button>
+            <button class="btn btn-water-undo" data-walk="-15">-15m</button>
           </div>
           <div id="walking-insight-slot"></div>
         </div>
@@ -209,12 +209,12 @@
         <div id="track-evening" class="track-card">
           <h2 class="track-title">Evening Check-in</h2>
           <div class="nes-section" id="nes-section">
-            <p class="nes-title">NES markers</p>
+            <p class="nes-title">Evening habits</p>
             <label class="nes-check"><input type="checkbox" data-nes="ateAfterWindow"> Ate after 6 PM</label>
             <label class="nes-check"><input type="checkbox" data-nes="needFoodToSleep"> Need food to sleep</label>
             <label class="nes-check"><input type="checkbox" data-nes="moodWorsening"> Mood worsened tonight</label>
             <label class="nes-check"><input type="checkbox" data-nes="morningAnorexia"> No appetite this morning</label>
-            <div class="nes-warning hidden" id="nes-warning">3+ markers — consider adjusting protocol</div>
+            <div class="nes-warning hidden" id="nes-warning">3+ patterns flagged — worth reviewing with your protocol</div>
           </div>
           <button class="btn btn-primary" id="evening-save">Save</button>
           <div id="evening-insight-slot" class="hidden"></div>

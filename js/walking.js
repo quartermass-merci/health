@@ -28,29 +28,22 @@ function bindWalkingButtons() {
       const today = getToday();
       const profile = getProfile();
 
-      today.walkingMin += min;
-      today.walkingLogs.push({
-        min,
-        time: new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })
-      });
+      if (min < 0) {
+        // Subtract: floor at 0, pop last log
+        today.walkingMin = Math.max(0, today.walkingMin + min);
+        if (today.walkingLogs.length > 0) today.walkingLogs.pop();
+      } else {
+        today.walkingMin += min;
+        today.walkingLogs.push({
+          min,
+          time: new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })
+        });
+      }
       saveToday(today);
       renderWalking();
-      showInlineInsight('walking-insight-slot', getWalkingInsight(today, profile));
+      if (min > 0) showInlineInsight('walking-insight-slot', getWalkingInsight(today, profile));
     };
   });
-
-  const undoBtn = document.getElementById('walk-undo');
-  if (undoBtn) {
-    undoBtn.onclick = () => {
-      const today = getToday();
-      if (today.walkingLogs.length > 0) {
-        const last = today.walkingLogs.pop();
-        today.walkingMin = Math.max(0, today.walkingMin - last.min);
-        saveToday(today);
-        renderWalking();
-      }
-    };
-  }
 }
 
 export function getWalkingStatus() {
