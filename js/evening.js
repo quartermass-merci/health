@@ -1,8 +1,7 @@
-// evening.js — PMR reminder + NES check-in
+// evening.js — NES check-in
 
 import { getToday, saveToday } from './store.js';
-import { getPmrInsight } from './insights.js';
-import { showInsight } from './app.js';
+import { showInlineInsight } from './app.js';
 
 export function initEvening() {
   renderEvening();
@@ -11,18 +10,6 @@ export function initEvening() {
 
 function renderEvening() {
   const today = getToday();
-
-  // PMR status
-  const pmrBtn = document.getElementById('pmr-done-btn');
-  if (today.pmrDone) {
-    pmrBtn.textContent = 'Done ✓';
-    pmrBtn.className = 'btn btn-outline pmr-done';
-    pmrBtn.disabled = true;
-  } else {
-    pmrBtn.textContent = 'Done ✓';
-    pmrBtn.className = 'btn btn-success';
-    pmrBtn.disabled = false;
-  }
 
   // NES checkboxes
   if (today.nesMarkers) {
@@ -35,15 +22,6 @@ function renderEvening() {
 }
 
 function bindEveningButtons() {
-  // PMR
-  document.getElementById('pmr-done-btn').onclick = () => {
-    const today = getToday();
-    today.pmrDone = true;
-    saveToday(today);
-    renderEvening();
-    showInsight(getPmrInsight(), '🧘');
-  };
-
   // NES checkboxes
   document.querySelectorAll('[data-nes]').forEach(cb => {
     cb.onchange = () => checkNesWarning();
@@ -58,7 +36,7 @@ function bindEveningButtons() {
     });
     today.nesMarkers = markers;
     saveToday(today);
-    showInsight('Evening check-in saved. Rest well tonight.', '🌙');
+    showInlineInsight('evening-insight-slot', 'Evening check-in saved. Rest well tonight.');
   };
 }
 
@@ -75,7 +53,6 @@ function checkNesWarning() {
 export function getEveningStatus() {
   const today = getToday();
   return {
-    pmrDone: today.pmrDone,
     nesCount: Object.values(today.nesMarkers || {}).filter(Boolean).length
   };
 }

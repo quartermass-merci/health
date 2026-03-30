@@ -2,7 +2,7 @@
 
 import { getToday, saveToday, todayString } from './store.js';
 import { getMorningGreeting, getMorningQuote, getSleepInsight } from './insights.js';
-import { showInsight } from './app.js';
+import { showInlineInsight } from './app.js';
 
 export function initMorning() {
   const modal = document.getElementById('morning-modal');
@@ -31,7 +31,7 @@ export function initMorning() {
       const today = getToday();
       today.sleepQuality = selectedRating;
       saveToday(today);
-      showInsight(getSleepInsight(selectedRating), '😴');
+      // Sleep insight will show on dashboard after modal closes
     }
     modal.classList.add('hidden');
     localStorage.setItem('mt_morning_shown_' + todayString(), '1');

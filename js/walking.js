@@ -1,8 +1,8 @@
-// walking.js — Walking/NEAT tracker
+// walking.js — Walking/NEAT tracker with bar progress
 
 import { getToday, saveToday, getProfile } from './store.js';
 import { getWalkingInsight } from './insights.js';
-import { showInsight } from './app.js';
+import { showInlineInsight } from './app.js';
 
 export function initWalking() {
   renderWalking();
@@ -14,10 +14,11 @@ function renderWalking() {
   const profile = getProfile();
   const goal = profile.walkGoalMin;
   const current = today.walkingMin;
-  const pct = Math.min((current / goal) * 100, 100);
+  const pct = Math.min(Math.round((current / goal) * 100), 100);
 
-  document.getElementById('walking-amount').textContent = current;
+  document.getElementById('walking-amount').textContent = `${current} min`;
   document.getElementById('walking-fill').style.width = pct + '%';
+  document.getElementById('walking-pct').textContent = pct + '%';
 }
 
 function bindWalkingButtons() {
@@ -34,15 +35,28 @@ function bindWalkingButtons() {
       });
       saveToday(today);
       renderWalking();
-      showInsight(getWalkingInsight(today, profile), '🚶');
+      showInlineInsight('walking-insight-slot', getWalkingInsight(today, profile));
     };
   });
+
+  const undoBtn = document.getElementById('walk-undo');
+  if (undoBtn) {
+    undoBtn.onclick = () => {
+      const today = getToday();
+      if (today.walkingLogs.length > 0) {
+        const last = today.walkingLogs.pop();
+        today.walkingMin = Math.max(0, today.walkingMin - last.min);
+        saveToday(today);
+        renderWalking();
+      }
+    };
+  }
 }
 
 export function getWalkingStatus() {
   const today = getToday();
   const profile = getProfile();
   if (!profile) return { text: '0 / 150 min', pct: 0 };
-  const pct = Math.round((today.walkingMin / profile.walkGoalMin) * 100);
+  const pct = Math.min(Math.round((today.walkingMin / profile.walkGoalMin) * 100), 100);
   return { text: `${today.walkingMin} / ${profile.walkGoalMin} min`, pct };
 }

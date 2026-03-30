@@ -7,9 +7,24 @@ let currentMonth = new Date().getMonth();
 let currentYear = new Date().getFullYear();
 
 export function initCalendar() {
+  // Reset to current month/year every time calendar is opened
+  const now = new Date();
+  currentMonth = now.getMonth();
+  currentYear = now.getFullYear();
+
   renderCalendar();
   document.getElementById('cal-prev').onclick = () => { prevMonth(); renderCalendar(); };
   document.getElementById('cal-next').onclick = () => { nextMonth(); renderCalendar(); };
+
+  const todayBtn = document.getElementById('cal-today');
+  if (todayBtn) {
+    todayBtn.onclick = () => {
+      const now = new Date();
+      currentMonth = now.getMonth();
+      currentYear = now.getFullYear();
+      renderCalendar();
+    };
+  }
 }
 
 function prevMonth() {
@@ -79,7 +94,7 @@ function getDayScore(day) {
   const total = 5;
 
   let dots = '';
-  const colors = ['var(--amber)', 'var(--blue)', 'var(--green)', 'var(--purple)', 'var(--cyan)'];
+  const colors = ['var(--accent)', 'var(--water)', 'var(--positive)', 'var(--accent)', 'var(--positive)'];
 
   for (let i = 0; i < total; i++) {
     const color = checks[i] ? colors[i] : 'var(--text-muted)';
@@ -104,8 +119,7 @@ function showDayDetail(dateStr) {
     { label: 'Weight', value: day.weight !== null ? `${day.weight} lbs` : '— Not logged' },
     { label: 'Low-Carb', value: day.stayedLowCarb === true ? '✓ Yes' : day.stayedLowCarb === false ? '✗ No' : '— Not recorded' },
     { label: 'Walking', value: `${day.walkingMin} / ${profile.walkGoalMin} min` },
-    { label: 'Sleep', value: day.sleepQuality !== null ? `${'★'.repeat(day.sleepQuality)}${'☆'.repeat(5 - day.sleepQuality)}` : '— Not rated' },
-    { label: 'PMR', value: day.pmrDone ? '✓ Done' : '— Not done' }
+    { label: 'Sleep', value: day.sleepQuality !== null ? `${'★'.repeat(day.sleepQuality)}${'☆'.repeat(5 - day.sleepQuality)}` : '— Not rated' }
   ];
 
   rows.forEach(r => {

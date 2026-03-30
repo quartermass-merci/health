@@ -1,8 +1,8 @@
-// carbs.js — Low-carb daily check + streak
+// carbs.js — Low-carb daily check + streak with inline insights
 
 import { getToday, saveToday, getCarbStreak, getRecentDays } from './store.js';
 import { getCarbInsight } from './insights.js';
-import { showInsight } from './app.js';
+import { showInlineInsight } from './app.js';
 
 export function initCarbs() {
   renderCarbs();
@@ -15,12 +15,10 @@ function renderCarbs() {
 
   document.getElementById('streak-number').textContent = streak;
 
-  // Show answered state or question
   const question = document.getElementById('carb-question');
   if (today.stayedLowCarb !== null) {
     question.className = 'carb-answered';
-    question.textContent = today.stayedLowCarb ? '✓ Low-carb today' : '✗ Not low-carb today';
-    // Dim the buttons
+    question.textContent = today.stayedLowCarb ? 'Low-carb today' : 'Not low-carb today';
     document.querySelectorAll('[data-carb]').forEach(btn => {
       btn.style.opacity = today.stayedLowCarb === (btn.dataset.carb === 'yes') ? '1' : '0.3';
     });
@@ -30,7 +28,7 @@ function renderCarbs() {
     document.querySelectorAll('[data-carb]').forEach(btn => btn.style.opacity = '1');
   }
 
-  // Last 30 days dots
+  // Last 30 days dots — square dots instead of circles
   const recent = getRecentDays(30);
   const dotsEl = document.getElementById('carb-dots');
   dotsEl.innerHTML = recent.map(d => {
@@ -49,7 +47,7 @@ function bindCarbButtons() {
 
       const streak = getCarbStreak();
       renderCarbs();
-      showInsight(getCarbInsight(streak, val), val ? '🥩' : '🔄');
+      showInlineInsight('carb-insight-slot', getCarbInsight(streak, val));
     };
   });
 }

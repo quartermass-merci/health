@@ -1,8 +1,8 @@
-// weight.js — Weight input, stats, and Chart.js graph
+// weight.js — Weight input, stats, and Chart.js graph with inline insights
 
 import { getToday, saveToday, getProfile, getAllWeights } from './store.js';
 import { getWeightInsight, getWeightStats } from './insights.js';
-import { showInsight } from './app.js';
+import { showInlineInsight } from './app.js';
 
 let weightChart = null;
 
@@ -16,7 +16,6 @@ function bindWeightInput() {
   const input = document.getElementById('weight-input');
   const btn = document.getElementById('weight-log');
 
-  // Pre-fill with today's weight if already logged
   const today = getToday();
   if (today.weight !== null) {
     input.value = today.weight;
@@ -33,10 +32,9 @@ function bindWeightInput() {
 
     renderWeightStats();
     renderWeightChart();
-    showInsight(getWeightInsight(today, profile), '⚖️');
+    showInlineInsight('weight-insight-slot', getWeightInsight(today, profile));
   };
 
-  // Also log on Enter
   input.onkeydown = (e) => {
     if (e.key === 'Enter') btn.click();
   };
@@ -57,42 +55,37 @@ function renderWeightStats() {
 
   let html = '';
 
-  // Last delta
   if (stats.lastDelta !== null) {
     const cls = stats.lastDelta > 0 ? 'positive' : stats.lastDelta < 0 ? 'negative' : 'neutral';
     const sign = stats.lastDelta > 0 ? '-' : stats.lastDelta < 0 ? '+' : '';
     html += `<div class="weight-stat">
-      <div class="weight-stat-value ${cls}">${sign}${Math.abs(stats.lastDelta).toFixed(1)} lbs</div>
-      <div class="weight-stat-label">Since Last Weigh-in</div>
+      <div class="weight-stat-value ${cls}">${sign}${Math.abs(stats.lastDelta).toFixed(1)}</div>
+      <div class="weight-stat-label">Since last</div>
     </div>`;
   }
 
-  // 7-day avg
   if (stats.sevenDayAvg !== null) {
     html += `<div class="weight-stat">
       <div class="weight-stat-value">${stats.sevenDayAvg.toFixed(1)}</div>
-      <div class="weight-stat-label">7-Day Average</div>
+      <div class="weight-stat-label">7-day avg</div>
     </div>`;
   }
 
-  // Total lost
   const lostCls = stats.totalLost > 0 ? 'positive' : 'neutral';
   html += `<div class="weight-stat">
-    <div class="weight-stat-value ${lostCls}">${stats.totalLost.toFixed(1)} lbs</div>
-    <div class="weight-stat-label">Total Lost from ${profile.startWeight}</div>
+    <div class="weight-stat-value ${lostCls}">${stats.totalLost.toFixed(1)}</div>
+    <div class="weight-stat-label">Total lost</div>
   </div>`;
 
-  // Remaining
   html += `<div class="weight-stat">
-    <div class="weight-stat-value">${stats.remaining.toFixed(1)} lbs</div>
-    <div class="weight-stat-label">To Goal (${profile.goalWeight})</div>
+    <div class="weight-stat-value">${stats.remaining.toFixed(1)}</div>
+    <div class="weight-stat-label">To ${profile.goalWeight}</div>
   </div>`;
 
-  // Prediction
   if (stats.predictedDate) {
     html += `<div class="weight-stat" style="grid-column: 1 / -1;">
-      <div class="weight-stat-value text-blue">${stats.predictedDate}</div>
-      <div class="weight-stat-label">Predicted Goal Date</div>
+      <div class="weight-stat-value text-accent">${stats.predictedDate}</div>
+      <div class="weight-stat-label">Predicted goal date</div>
     </div>`;
   }
 
@@ -113,7 +106,6 @@ function renderWeightChart() {
   });
   const data = weights.map(w => w.weight);
 
-  // 7-day SMA
   const sma = [];
   for (let i = 0; i < data.length; i++) {
     const window = data.slice(Math.max(0, i - 6), i + 1);
@@ -130,20 +122,20 @@ function renderWeightChart() {
         {
           label: 'Weight',
           data,
-          borderColor: '#448aff',
-          backgroundColor: 'rgba(68, 138, 255, 0.1)',
-          borderWidth: 2,
-          pointRadius: 3,
-          pointBackgroundColor: '#448aff',
+          borderColor: '#9b9890',
+          backgroundColor: 'transparent',
+          borderWidth: 1.5,
+          pointRadius: 2.5,
+          pointBackgroundColor: '#e8e6e1',
           tension: 0.1,
           fill: false
         },
         {
           label: '7-Day Avg',
           data: sma,
-          borderColor: '#b388ff',
+          borderColor: '#d4a057',
           borderWidth: 2,
-          borderDash: [5, 5],
+          borderDash: [4, 4],
           pointRadius: 0,
           tension: 0.3,
           fill: false
@@ -151,9 +143,9 @@ function renderWeightChart() {
         {
           label: 'Goal',
           data: new Array(data.length).fill(profile.goalWeight),
-          borderColor: 'rgba(0, 230, 118, 0.5)',
+          borderColor: 'rgba(124, 184, 122, 0.4)',
           borderWidth: 1,
-          borderDash: [10, 5],
+          borderDash: [8, 4],
           pointRadius: 0,
           fill: false
         }
@@ -162,17 +154,22 @@ function renderWeightChart() {
     options: {
       responsive: true,
       maintainAspectRatio: false,
+      animation: {
+        duration: 1200,
+        easing: 'easeOutQuart',
+        delay: (ctx) => ctx.dataIndex * 40 + (ctx.datasetIndex * 200)
+      },
       interaction: { mode: 'index', intersect: false },
       plugins: {
         legend: {
           display: true,
-          labels: { color: '#8888a0', font: { size: 10 }, boxWidth: 12, padding: 8 }
+          labels: { color: '#5e5d58', font: { size: 9 }, boxWidth: 10, padding: 6 }
         },
         tooltip: {
-          backgroundColor: '#1a1a24',
-          titleColor: '#f0f0f5',
-          bodyColor: '#f0f0f5',
-          borderColor: '#22222e',
+          backgroundColor: '#1c1c1a',
+          titleColor: '#e8e6e1',
+          bodyColor: '#9b9890',
+          borderColor: '#252523',
           borderWidth: 1,
           callbacks: {
             label: (ctx) => `${ctx.dataset.label}: ${ctx.parsed.y.toFixed(1)} lbs`
@@ -181,12 +178,12 @@ function renderWeightChart() {
       },
       scales: {
         x: {
-          ticks: { color: '#555568', font: { size: 9 }, maxRotation: 45 },
-          grid: { color: 'rgba(85, 85, 104, 0.15)' }
+          ticks: { color: '#5e5d58', font: { size: 9 }, maxRotation: 45 },
+          grid: { color: 'rgba(94, 93, 88, 0.1)' }
         },
         y: {
-          ticks: { color: '#555568', font: { size: 10 } },
-          grid: { color: 'rgba(85, 85, 104, 0.15)' },
+          ticks: { color: '#5e5d58', font: { size: 9 } },
+          grid: { color: 'rgba(94, 93, 88, 0.1)' },
           suggestedMin: profile.goalWeight - 5,
           suggestedMax: profile.startWeight + 5
         }
@@ -199,7 +196,7 @@ export function getWeightSummary() {
   const today = getToday();
   const profile = getProfile();
   if (!profile) return { text: 'Not logged', totalLost: 0 };
-  if (today.weight === null) return { text: 'Not logged today', totalLost: profile.startWeight - (getAllWeights().slice(-1)[0]?.weight ?? profile.startWeight) };
+  if (today.weight === null) return { text: 'Not logged', totalLost: profile.startWeight - (getAllWeights().slice(-1)[0]?.weight ?? profile.startWeight) };
   return {
     text: `${today.weight} lbs`,
     totalLost: profile.startWeight - today.weight

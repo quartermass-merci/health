@@ -13,12 +13,13 @@ import { initPhases } from './phases.js';
 import { initCalendar } from './calendar.js';
 import { initDashboard } from './dashboard.js';
 
-let currentSection = 'dashboard';
+let currentSection = null;
 let toastTimer = null;
 
-// Toast system
+// Toast system (kept for settings/export confirmations)
 export function showInsight(message, icon = '💡') {
   const toast = document.getElementById('insight-toast');
+  if (!toast) return;
   const msgEl = document.getElementById('toast-message');
   const iconEl = document.getElementById('toast-icon');
   iconEl.textContent = icon;
@@ -29,44 +30,68 @@ export function showInsight(message, icon = '💡') {
   toast.onclick = () => toast.classList.add('hidden');
 }
 
-// Navigation
+// Inline insight system (appears below each tracker input)
+export function showInlineInsight(slotId, message) {
+  const slot = document.getElementById(slotId);
+  if (!slot || !message) return;
+  slot.textContent = message;
+  slot.classList.add('inline-insight');
+  slot.classList.remove('hidden');
+  // Auto-hide after 8 seconds
+  setTimeout(() => {
+    slot.classList.add('hidden');
+  }, 8000);
+}
+
+// Navigation — with View Transitions (Direction B)
 function navigate(section) {
-  if (currentSection === 'track') destroyFeeding();
+  if (section === currentSection) return;
 
-  document.querySelectorAll('.section').forEach(s => {
-    s.classList.remove('active');
-    s.classList.add('hidden');
-  });
-  const el = document.getElementById('section-' + section);
-  if (el) {
-    el.classList.remove('hidden');
-    el.classList.add('active');
+  const doNavigate = () => {
+    if (currentSection === 'track') destroyFeeding();
+
+    document.querySelectorAll('.section').forEach(s => {
+      s.classList.remove('active');
+      s.classList.add('hidden');
+    });
+    const el = document.getElementById('section-' + section);
+    if (el) {
+      el.classList.remove('hidden');
+      el.classList.add('active');
+    }
+
+    document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+    const btn = document.querySelector(`.nav-btn[data-section="${section}"]`);
+    if (btn) btn.classList.add('active');
+
+    const titles = { dashboard: 'Dashboard', track: 'Track', calendar: 'Calendar', settings: 'Settings' };
+    document.getElementById('app-title').textContent = titles[section] || 'Dashboard';
+    currentSection = section;
+
+    // Render section
+    if (section === 'dashboard') initDashboard();
+    if (section === 'track') {
+      initFeeding();
+      initWater();
+      initWeight();
+      initCarbs();
+      initWalking();
+      initEvening();
+      renderTrackSleep();
+    }
+    if (section === 'calendar') initCalendar();
+    if (section === 'settings') loadSettings();
+
+    // Scroll to top
+    document.querySelector('.app-main').scrollTop = 0;
+  };
+
+  // Use View Transitions API if available (Direction B)
+  if (document.startViewTransition) {
+    document.startViewTransition(doNavigate);
+  } else {
+    doNavigate();
   }
-
-  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
-  const btn = document.querySelector(`.nav-btn[data-section="${section}"]`);
-  if (btn) btn.classList.add('active');
-
-  const titles = { dashboard: 'Dashboard', track: 'Track', calendar: 'Calendar', settings: 'Settings' };
-  document.getElementById('app-title').textContent = titles[section] || 'Dashboard';
-  currentSection = section;
-
-  // Render section
-  if (section === 'dashboard') initDashboard();
-  if (section === 'track') {
-    initFeeding();
-    initWater();
-    initWeight();
-    initCarbs();
-    initWalking();
-    initEvening();
-    renderTrackSleep();
-  }
-  if (section === 'calendar') initCalendar();
-  if (section === 'settings') loadSettings();
-
-  // Scroll to top
-  document.querySelector('.app-main').scrollTop = 0;
 }
 
 export function navigateTo(section) {
@@ -103,8 +128,6 @@ function loadSettings() {
   document.getElementById('settings-start-weight').value = profile.startWeight;
   document.getElementById('settings-goal-weight').value = profile.goalWeight;
   document.getElementById('settings-start-date').value = profile.startDate;
-  document.getElementById('settings-pmr-time').value = profile.pmrReminderTime || '21:30';
-
   const lastBackup = getLastBackupDate();
   const note = document.getElementById('last-backup-note');
   if (lastBackup) {
@@ -120,7 +143,6 @@ function bindSettings() {
     profile.startWeight = parseFloat(document.getElementById('settings-start-weight').value) || profile.startWeight;
     profile.goalWeight = parseFloat(document.getElementById('settings-goal-weight').value) || profile.goalWeight;
     profile.startDate = document.getElementById('settings-start-date').value || profile.startDate;
-    profile.pmrReminderTime = document.getElementById('settings-pmr-time').value || '21:30';
     saveProfile(profile);
     showInsight('Settings saved!', '✅');
   };

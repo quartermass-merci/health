@@ -1,10 +1,11 @@
-// feeding.js — Feeding timer module (12 PM - 6 PM)
+// feeding.js — Feeding timer with animated arc and color transitions
 
 import { getToday, saveToday, getProfile } from './store.js';
 import { getFastingInsight } from './insights.js';
-import { showInsight } from './app.js';
+import { showInlineInsight } from './app.js';
 
 let timerInterval = null;
+const ARC_CIRCUMFERENCE = 2 * Math.PI * 70; // r=70 in SVG
 
 export function initFeeding() {
   destroyFeeding();
@@ -31,38 +32,60 @@ function updateFeedingDisplay() {
   const currentMinutes = hour * 60 + min;
   const windowStartMin = profile.feedWindowStart * 60;
   const windowEndMin = profile.feedWindowEnd * 60;
+  const totalWindow = windowEndMin - windowStartMin;
 
-  const indicator = document.getElementById('feeding-indicator');
+  const arc = document.getElementById('feeding-arc');
   const timeEl = document.getElementById('feeding-time');
   const labelEl = document.getElementById('feeding-label');
   const checkEl = document.getElementById('feeding-check');
 
+  if (!arc) return;
+
   if (currentMinutes < windowStartMin) {
-    // Before window
-    indicator.className = 'feeding-indicator before';
+    // Before window — fasting
     const diff = windowStartMin - currentMinutes;
     const h = Math.floor(diff / 60);
     const m = diff % 60;
-    timeEl.textContent = `${h}:${String(m).padStart(2, '0')}:${String(60 - sec).padStart(2, '0')}`;
+    const secLeft = 60 - sec;
+    timeEl.textContent = `${h}:${String(m).padStart(2, '0')}:${String(secLeft === 60 ? 0 : secLeft).padStart(2, '0')}`;
     labelEl.textContent = 'until window opens';
+
+    // Arc: show fasting progress (hours since last window close)
+    const fastedSinceLast = 24 - windowEndMin / 60 + hour + min / 60;
+    const fastPct = Math.min(fastedSinceLast / 18, 1); // 18h = "full fast"
+    arc.style.stroke = 'var(--accent)';
+    arc.style.strokeDasharray = ARC_CIRCUMFERENCE;
+    arc.style.strokeDashoffset = ARC_CIRCUMFERENCE * (1 - fastPct);
     checkEl.classList.add('hidden');
   } else if (currentMinutes < windowEndMin) {
     // During window
-    indicator.className = 'feeding-indicator during';
-    const diff = windowEndMin - currentMinutes;
-    const h = Math.floor(diff / 60);
-    const m = diff % 60;
-    timeEl.textContent = `${h}:${String(m).padStart(2, '0')}:${String(60 - sec).padStart(2, '0')}`;
-    labelEl.textContent = 'remaining in window';
+    const elapsed = currentMinutes - windowStartMin;
+    const remaining = windowEndMin - currentMinutes;
+    const h = Math.floor(remaining / 60);
+    const m = remaining % 60;
+    const secLeft = 60 - sec;
+    timeEl.textContent = `${h}:${String(m).padStart(2, '0')}:${String(secLeft === 60 ? 0 : secLeft).padStart(2, '0')}`;
+    labelEl.textContent = 'remaining';
+
+    // Arc depletes as window is consumed, color shifts green→amber
+    const pctUsed = elapsed / totalWindow;
+    const pctLeft = 1 - pctUsed;
+    arc.style.stroke = pctLeft > 0.5 ? 'var(--positive)' : pctLeft > 0.2 ? 'var(--accent)' : 'var(--negative)';
+    arc.style.strokeDasharray = ARC_CIRCUMFERENCE;
+    arc.style.strokeDashoffset = ARC_CIRCUMFERENCE * pctUsed;
     checkEl.classList.add('hidden');
   } else {
-    // After window
-    indicator.className = 'feeding-indicator after';
+    // After window — fasting
     const fastedMin = currentMinutes - windowEndMin;
     const h = Math.floor(fastedMin / 60);
     const m = fastedMin % 60;
     timeEl.textContent = `${h}:${String(m).padStart(2, '0')}`;
-    labelEl.textContent = 'hours fasted tonight';
+    labelEl.textContent = 'fasted';
+
+    const fastPct = Math.min(fastedMin / (18 * 60), 1);
+    arc.style.stroke = 'var(--negative)';
+    arc.style.strokeDasharray = ARC_CIRCUMFERENCE;
+    arc.style.strokeDashoffset = ARC_CIRCUMFERENCE * (1 - fastPct);
 
     const today = getToday();
     if (today.stayedInWindow === null) {
@@ -83,7 +106,9 @@ function bindFeedingButtons() {
 
       const profile = getProfile();
       const insight = getFastingInsight(new Date(), profile.feedWindowStart, profile.feedWindowEnd);
-      showInsight(val ? insight : "No judgment. Return to protocol tomorrow. The no-compensation rule: just resume.", val ? '🟢' : '🔄');
+      showInlineInsight('feeding-insight-slot',
+        val ? insight : "No judgment. Return to protocol tomorrow. No compensation — just resume."
+      );
 
       document.getElementById('feeding-check').classList.add('hidden');
     };
@@ -92,7 +117,7 @@ function bindFeedingButtons() {
 
 export function getFeedingStatus() {
   const profile = getProfile();
-  if (!profile) return { state: 'unknown', text: '' };
+  if (!profile) return { state: 'unknown', text: '', color: 'accent' };
 
   const now = new Date();
   const currentMinutes = now.getHours() * 60 + now.getMinutes();
@@ -101,12 +126,12 @@ export function getFeedingStatus() {
 
   if (currentMinutes < windowStartMin) {
     const diff = windowStartMin - currentMinutes;
-    return { state: 'before', text: `Opens in ${Math.floor(diff / 60)}h ${diff % 60}m`, color: 'amber' };
+    return { state: 'before', text: `${Math.floor(diff / 60)}h ${diff % 60}m`, color: 'accent' };
   }
   if (currentMinutes < windowEndMin) {
     const diff = windowEndMin - currentMinutes;
-    return { state: 'during', text: `${Math.floor(diff / 60)}h ${diff % 60}m left`, color: 'green' };
+    return { state: 'during', text: `${Math.floor(diff / 60)}h ${diff % 60}m`, color: 'positive' };
   }
   const fasted = currentMinutes - windowEndMin;
-  return { state: 'after', text: `${Math.floor(fasted / 60)}h fasted`, color: 'red' };
+  return { state: 'after', text: `${Math.floor(fasted / 60)}h ${fasted % 60}m`, color: 'negative' };
 }
