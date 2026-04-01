@@ -1,162 +1,135 @@
 // morning-checkin.js — Morning goal-setting exercise
-// Replaces evening check-in. Asks about yesterday + sets intention for today.
+// Static HTML in index.html, JS binds to existing DOM elements.
 
 import { getActiveDay, saveActiveDay, getDay, saveDay, yesterdayStr, getCarbStreak, getRecentDays } from './store.js';
 import { getCarbInsight } from './insights.js';
 import { showInlineInsight } from './app.js';
 
-export function initMorningCheckin() {
-  renderMorningCheckin();
-  bindMorningCheckin();
-}
+const answers = {};
 
-function renderMorningCheckin() {
-  const content = document.getElementById('morning-checkin-content');
+export function initMorningCheckin() {
   const today = getActiveDay();
-  const checkin = today.morningCheckin;
   const streak = getCarbStreak();
 
-  if (today.morningCheckinDone && checkin) {
-    // Already done — show summary
-    const feelingEmojis = { great: '🔥', good: '😊', okay: '😐', tough: '😤', rough: '😔' };
-    content.innerHTML = `
-      <div class="mc-done">
-        <div class="mc-done-check">✓ Checked in</div>
-        <div class="mc-summary">
-          <span>Low-carb yesterday: ${checkin.lowCarbYesterday ? '✓' : '✗'}</span>
-          <span>After 6 PM: ${checkin.ateAfterSixPm ? 'Yes' : 'No'}</span>
-          <span>Feeling: ${feelingEmojis[checkin.feeling] || '—'}</span>
-        </div>
-        <div class="carb-streak-inline">
-          <span class="streak-number-sm">${streak}</span>
-          <span class="streak-label-sm">day low-carb streak</span>
-        </div>
-      </div>`;
-    document.getElementById('morning-checkin-save').classList.add('hidden');
+  // Update streak display
+  const streakEl = document.getElementById('mc-streak');
+  if (streakEl) streakEl.textContent = streak;
+
+  // Update carb dots
+  const dotsEl = document.getElementById('mc-carb-dots');
+  if (dotsEl) {
+    const recent = getRecentDays(30);
+    dotsEl.innerHTML = recent.map(d => {
+      const cls = d.stayedLowCarb === true ? 'yes' : d.stayedLowCarb === false ? 'no' : '';
+      return `<div class="carb-dot ${cls}"></div>`;
+    }).join('');
+  }
+
+  // Check if already done
+  if (today.morningCheckinDone && today.morningCheckin) {
+    showDoneState(today.morningCheckin, streak);
     return;
   }
 
+  // Show questions, hide done state
+  document.getElementById('mc-questions').classList.remove('hidden');
+  document.getElementById('mc-done-state').classList.add('hidden');
   document.getElementById('morning-checkin-save').classList.remove('hidden');
 
-  // Build the 5 questions
-  content.innerHTML = `
-    <div class="mc-question">
-      <p class="mc-q-text">Did you stay low-carb yesterday?</p>
-      <div class="btn-row mc-btn-row">
-        <button class="btn btn-success" data-mc="lowCarbYesterday" data-val="true">Yes</button>
-        <button class="btn btn-danger" data-mc="lowCarbYesterday" data-val="false">No</button>
-      </div>
-      <div class="carb-streak-inline">
-        <span class="streak-number-sm">${streak}</span>
-        <span class="streak-label-sm">day streak</span>
-      </div>
-    </div>
+  // Clear previous selections
+  document.querySelectorAll('.mc-selected').forEach(el => el.classList.remove('mc-selected'));
+  Object.keys(answers).forEach(k => delete answers[k]);
 
-    <div class="mc-question">
-      <p class="mc-q-text">Did you eat anything after 6 PM?</p>
-      <div class="btn-row mc-btn-row">
-        <button class="btn btn-danger" data-mc="ateAfterSixPm" data-val="true">Yes</button>
-        <button class="btn btn-success" data-mc="ateAfterSixPm" data-val="false">No</button>
-      </div>
-    </div>
+  // Bind all buttons
+  bindBtn('mc-lowcarb-yes', 'lowCarbYesterday', true);
+  bindBtn('mc-lowcarb-no', 'lowCarbYesterday', false);
+  bindBtn('mc-after6-yes', 'ateAfterSixPm', true);
+  bindBtn('mc-after6-no', 'ateAfterSixPm', false);
+  bindBtn('mc-hunger-yes', 'fightFeedingSignals', true);
+  bindBtn('mc-hunger-no', 'fightFeedingSignals', false);
+  bindBtn('mc-feel-great', 'feeling', 'great');
+  bindBtn('mc-feel-good', 'feeling', 'good');
+  bindBtn('mc-feel-okay', 'feeling', 'okay');
+  bindBtn('mc-feel-tough', 'feeling', 'tough');
+  bindBtn('mc-feel-rough', 'feeling', 'rough');
+  bindBtn('mc-commit', 'committedToday', true);
 
-    <div class="mc-question">
-      <p class="mc-q-text">Did you wake up fighting hunger signals?</p>
-      <div class="btn-row mc-btn-row">
-        <button class="btn btn-outline-dim" data-mc="fightFeedingSignals" data-val="true">Yes</button>
-        <button class="btn btn-outline-dim" data-mc="fightFeedingSignals" data-val="false">No</button>
-      </div>
-    </div>
-
-    <div class="mc-question">
-      <p class="mc-q-text">How did you feel yesterday?</p>
-      <div class="mc-emoji-row">
-        <button class="mc-emoji" data-mc="feeling" data-val="great">🔥<span>Great</span></button>
-        <button class="mc-emoji" data-mc="feeling" data-val="good">😊<span>Good</span></button>
-        <button class="mc-emoji" data-mc="feeling" data-val="okay">😐<span>Okay</span></button>
-        <button class="mc-emoji" data-mc="feeling" data-val="tough">😤<span>Tough</span></button>
-        <button class="mc-emoji" data-mc="feeling" data-val="rough">😔<span>Rough</span></button>
-      </div>
-    </div>
-
-    <div class="mc-question mc-commitment">
-      <p class="mc-q-text">Are you committed to following your plan today?</p>
-      <button class="btn btn-primary btn-lg mc-commit-btn" data-mc="committedToday" data-val="true">I'm committed</button>
-    </div>
-
-    <div class="mc-dots">${renderCarbDots()}</div>
-  `;
+  // Save button
+  document.getElementById('morning-checkin-save').onclick = saveMorningCheckin;
 }
 
-function renderCarbDots() {
-  const recent = getRecentDays(30);
-  return recent.map(d => {
-    const cls = d.stayedLowCarb === true ? 'yes' : d.stayedLowCarb === false ? 'no' : '';
-    return `<div class="carb-dot ${cls}"></div>`;
-  }).join('');
+function bindBtn(id, key, value) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  // Remove old listeners by replacing with clone
+  const fresh = el.cloneNode(true);
+  el.parentNode.replaceChild(fresh, el);
+
+  fresh.onclick = function () {
+    answers[key] = value;
+
+    // Deselect siblings with same key, select this one
+    const parent = fresh.parentElement;
+    if (parent) {
+      parent.querySelectorAll('button').forEach(b => b.classList.remove('mc-selected'));
+    }
+    fresh.classList.add('mc-selected');
+  };
 }
 
-let mcAnswers = {};
-
-function bindMorningCheckin() {
-  mcAnswers = {};
-  const content = document.getElementById('morning-checkin-content');
-
-  // Bind each button directly
-  content.querySelectorAll('[data-mc]').forEach(btn => {
-    btn.addEventListener('click', (e) => {
-      e.preventDefault();
-      const key = btn.dataset.mc;
-      const val = btn.dataset.val === 'true' ? true : btn.dataset.val === 'false' ? false : btn.dataset.val;
-      mcAnswers[key] = val;
-
-      // Highlight selected, deselect siblings
-      const parent = btn.closest('.btn-row, .mc-emoji-row, .mc-commitment');
-      if (parent) {
-        parent.querySelectorAll('[data-mc]').forEach(s => s.classList.remove('mc-selected'));
-      }
-      btn.classList.add('mc-selected');
-    });
-  });
-
-  // Save
-  const saveBtn = document.getElementById('morning-checkin-save');
-  if (saveBtn) {
-    saveBtn.onclick = () => {
-      // Need at least low-carb and commitment answered
-      if (mcAnswers.lowCarbYesterday === undefined || mcAnswers.committedToday === undefined) {
-        showInlineInsight('morning-checkin-insight-slot', 'Answer the low-carb and commitment questions to save.');
-        return;
-      }
-
-      const today = getActiveDay();
-      today.morningCheckin = {
-        lowCarbYesterday: mcAnswers.lowCarbYesterday ?? null,
-        ateAfterSixPm: mcAnswers.ateAfterSixPm ?? null,
-        fightFeedingSignals: mcAnswers.fightFeedingSignals ?? null,
-        feeling: mcAnswers.feeling ?? null,
-        committedToday: mcAnswers.committedToday ?? null
-      };
-      today.morningCheckinDone = true;
-      saveActiveDay(today);
-
-      // Write low-carb to yesterday's record (if not already answered)
-      const yStr = yesterdayStr();
-      const yesterday = getDay(yStr);
-      if (yesterday.stayedLowCarb === null && mcAnswers.lowCarbYesterday !== undefined) {
-        yesterday.stayedLowCarb = mcAnswers.lowCarbYesterday;
-        saveDay(yStr, yesterday);
-      }
-
-      const streak = getCarbStreak();
-      renderMorningCheckin();
-
-      // Show insight
-      if (mcAnswers.lowCarbYesterday) {
-        showInlineInsight('morning-checkin-insight-slot', getCarbInsight(streak, true));
-      } else {
-        showInlineInsight('morning-checkin-insight-slot', 'No guilt. Today is a fresh start. Follow the protocol.');
-      }
-    };
+function saveMorningCheckin() {
+  if (answers.lowCarbYesterday === undefined || answers.committedToday === undefined) {
+    showInlineInsight('morning-checkin-insight-slot', 'Answer the low-carb and commitment questions to save.');
+    return;
   }
+
+  const today = getActiveDay();
+  today.morningCheckin = {
+    lowCarbYesterday: answers.lowCarbYesterday ?? null,
+    ateAfterSixPm: answers.ateAfterSixPm ?? null,
+    fightFeedingSignals: answers.fightFeedingSignals ?? null,
+    feeling: answers.feeling ?? null,
+    committedToday: answers.committedToday ?? null
+  };
+  today.morningCheckinDone = true;
+  saveActiveDay(today);
+
+  // Write low-carb to yesterday's record
+  const yStr = yesterdayStr();
+  const yesterday = getDay(yStr);
+  if (yesterday.stayedLowCarb === null && answers.lowCarbYesterday !== undefined) {
+    yesterday.stayedLowCarb = answers.lowCarbYesterday;
+    saveDay(yStr, yesterday);
+  }
+
+  const streak = getCarbStreak();
+  showDoneState(today.morningCheckin, streak);
+
+  if (answers.lowCarbYesterday) {
+    showInlineInsight('morning-checkin-insight-slot', getCarbInsight(streak, true));
+  } else {
+    showInlineInsight('morning-checkin-insight-slot', 'No guilt. Today is a fresh start. Follow the protocol.');
+  }
+}
+
+function showDoneState(checkin, streak) {
+  const feelingEmojis = { great: '🔥', good: '😊', okay: '😐', tough: '😤', rough: '😔' };
+
+  document.getElementById('mc-questions').classList.add('hidden');
+  document.getElementById('morning-checkin-save').classList.add('hidden');
+
+  const doneEl = document.getElementById('mc-done-state');
+  doneEl.classList.remove('hidden');
+  doneEl.innerHTML = `
+    <div class="mc-done-check">✓ Checked in</div>
+    <div class="mc-summary">
+      <span>Low-carb yesterday: ${checkin.lowCarbYesterday ? '✓' : '✗'}</span>
+      <span>After 6 PM: ${checkin.ateAfterSixPm ? 'Yes' : 'No'}</span>
+      <span>Feeling: ${feelingEmojis[checkin.feeling] || '—'}</span>
+    </div>
+    <div class="carb-streak-inline">
+      <span class="streak-number-sm">${streak}</span>
+      <span class="streak-label-sm">day low-carb streak</span>
+    </div>
+  `;
 }

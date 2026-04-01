@@ -164,7 +164,59 @@
         <!-- Morning Check-in -->
         <div id="track-morning-checkin" class="track-card">
           <h2 class="track-title">Morning Check-in</h2>
-          <div id="morning-checkin-content"></div>
+
+          <!-- Done state (hidden by default) -->
+          <div id="mc-done-state" class="mc-done hidden"></div>
+
+          <!-- Questions (hidden after completion) -->
+          <div id="mc-questions">
+            <div class="mc-question">
+              <p class="mc-q-text">Did you stay low-carb yesterday?</p>
+              <div class="btn-row mc-btn-row">
+                <button class="btn btn-success" id="mc-lowcarb-yes">Yes</button>
+                <button class="btn btn-danger" id="mc-lowcarb-no">No</button>
+              </div>
+              <div class="carb-streak-inline">
+                <span class="streak-number-sm" id="mc-streak">0</span>
+                <span class="streak-label-sm">day streak</span>
+              </div>
+            </div>
+
+            <div class="mc-question">
+              <p class="mc-q-text">Did you eat anything after 6 PM?</p>
+              <div class="btn-row mc-btn-row">
+                <button class="btn btn-danger" id="mc-after6-yes">Yes</button>
+                <button class="btn btn-success" id="mc-after6-no">No</button>
+              </div>
+            </div>
+
+            <div class="mc-question">
+              <p class="mc-q-text">Did you wake up fighting hunger signals?</p>
+              <div class="btn-row mc-btn-row">
+                <button class="btn btn-outline-dim" id="mc-hunger-yes">Yes</button>
+                <button class="btn btn-outline-dim" id="mc-hunger-no">No</button>
+              </div>
+            </div>
+
+            <div class="mc-question">
+              <p class="mc-q-text">How did you feel yesterday?</p>
+              <div class="mc-emoji-row">
+                <button class="mc-emoji" id="mc-feel-great">🔥<span>Great</span></button>
+                <button class="mc-emoji" id="mc-feel-good">😊<span>Good</span></button>
+                <button class="mc-emoji" id="mc-feel-okay">😐<span>Okay</span></button>
+                <button class="mc-emoji" id="mc-feel-tough">😤<span>Tough</span></button>
+                <button class="mc-emoji" id="mc-feel-rough">😔<span>Rough</span></button>
+              </div>
+            </div>
+
+            <div class="mc-question mc-commitment">
+              <p class="mc-q-text">Are you committed to following your plan today?</p>
+              <button class="btn btn-primary btn-lg mc-commit-btn" id="mc-commit">I'm committed</button>
+            </div>
+
+            <div class="mc-dots" id="mc-carb-dots"></div>
+          </div>
+
           <button class="btn btn-primary" id="morning-checkin-save">Save Check-in</button>
           <div id="morning-checkin-insight-slot" class="hidden"></div>
         </div>
