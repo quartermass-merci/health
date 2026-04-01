@@ -96,60 +96,67 @@ function renderCarbDots() {
   }).join('');
 }
 
+let mcAnswers = {};
+
 function bindMorningCheckin() {
-  const answers = {};
+  mcAnswers = {};
   const content = document.getElementById('morning-checkin-content');
 
-  // Delegate clicks on mc buttons
-  content.onclick = (e) => {
-    const btn = e.target.closest('[data-mc]');
-    if (!btn) return;
+  // Bind each button directly
+  content.querySelectorAll('[data-mc]').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      e.preventDefault();
+      const key = btn.dataset.mc;
+      const val = btn.dataset.val === 'true' ? true : btn.dataset.val === 'false' ? false : btn.dataset.val;
+      mcAnswers[key] = val;
 
-    const key = btn.dataset.mc;
-    const val = btn.dataset.val === 'true' ? true : btn.dataset.val === 'false' ? false : btn.dataset.val;
-    answers[key] = val;
-
-    // Highlight selected
-    const siblings = btn.parentElement.querySelectorAll(`[data-mc="${key}"]`);
-    siblings.forEach(s => s.classList.remove('mc-selected'));
-    btn.classList.add('mc-selected');
-  };
+      // Highlight selected, deselect siblings
+      const parent = btn.closest('.btn-row, .mc-emoji-row, .mc-commitment');
+      if (parent) {
+        parent.querySelectorAll('[data-mc]').forEach(s => s.classList.remove('mc-selected'));
+      }
+      btn.classList.add('mc-selected');
+    });
+  });
 
   // Save
-  document.getElementById('morning-checkin-save').onclick = () => {
-    // Need at least low-carb and commitment answered
-    if (answers.lowCarbYesterday === undefined || answers.committedToday === undefined) {
-      showInlineInsight('morning-checkin-insight-slot', 'Answer the low-carb and commitment questions to save.');
-      return;
-    }
+  const saveBtn = document.getElementById('morning-checkin-save');
+  if (saveBtn) {
+    saveBtn.onclick = () => {
+      // Need at least low-carb and commitment answered
+      if (mcAnswers.lowCarbYesterday === undefined || mcAnswers.committedToday === undefined) {
+        showInlineInsight('morning-checkin-insight-slot', 'Answer the low-carb and commitment questions to save.');
+        return;
+      }
 
-    const today = getActiveDay();
-    today.morningCheckin = {
-      lowCarbYesterday: answers.lowCarbYesterday ?? null,
-      ateAfterSixPm: answers.ateAfterSixPm ?? null,
-      fightFeedingSignals: answers.fightFeedingSignals ?? null,
-      feeling: answers.feeling ?? null,
-      committedToday: answers.committedToday ?? null
+      const today = getActiveDay();
+      today.morningCheckin = {
+        lowCarbYesterday: mcAnswers.lowCarbYesterday ?? null,
+        ateAfterSixPm: mcAnswers.ateAfterSixPm ?? null,
+        fightFeedingSignals: mcAnswers.fightFeedingSignals ?? null,
+        feeling: mcAnswers.feeling ?? null,
+        committedToday: mcAnswers.committedToday ?? null
+      };
+      today.morningCheckinDone = true;
+      saveActiveDay(today);
+
+      // Write low-carb to yesterday's record (if not already answered)
+      const yStr = yesterdayStr();
+      const yesterday = getDay(yStr);
+      if (yesterday.stayedLowCarb === null && mcAnswers.lowCarbYesterday !== undefined) {
+        yesterday.stayedLowCarb = mcAnswers.lowCarbYesterday;
+        saveDay(yStr, yesterday);
+      }
+
+      const streak = getCarbStreak();
+      renderMorningCheckin();
+
+      // Show insight
+      if (mcAnswers.lowCarbYesterday) {
+        showInlineInsight('morning-checkin-insight-slot', getCarbInsight(streak, true));
+      } else {
+        showInlineInsight('morning-checkin-insight-slot', 'No guilt. Today is a fresh start. Follow the protocol.');
+      }
     };
-    today.morningCheckinDone = true;
-    saveActiveDay(today);
-
-    // Write low-carb to yesterday's record (if not already answered)
-    const yStr = yesterdayStr();
-    const yesterday = getDay(yStr);
-    if (yesterday.stayedLowCarb === null && answers.lowCarbYesterday !== undefined) {
-      yesterday.stayedLowCarb = answers.lowCarbYesterday;
-      saveDay(yStr, yesterday);
-    }
-
-    const streak = getCarbStreak();
-    renderMorningCheckin();
-
-    // Show insight
-    if (answers.lowCarbYesterday) {
-      showInlineInsight('morning-checkin-insight-slot', getCarbInsight(streak, true));
-    } else {
-      showInlineInsight('morning-checkin-insight-slot', 'No guilt. Today is a fresh start. Follow the protocol.');
-    }
-  };
+  }
 }
