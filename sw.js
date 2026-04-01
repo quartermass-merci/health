@@ -1,4 +1,4 @@
-const CACHE_NAME = 'metabolic-tracker-v2';
+const CACHE_NAME = 'metabolic-tracker-v3';
 const ASSETS = [
   './',
   './index.html',
@@ -14,7 +14,7 @@ const ASSETS = [
   './js/carbs.js',
   './js/walking.js',
   './js/craving.js',
-  './js/evening.js',
+  './js/morning-checkin.js',
   './js/phases.js',
   './js/calendar.js',
   './js/dashboard.js',

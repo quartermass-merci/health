@@ -12,13 +12,28 @@ export function initWalking() {
 function renderWalking() {
   const today = getActiveDay();
   const profile = getProfile();
-  const goal = profile.walkGoalMin;
+  const goal = profile.walkGoalMin || 90;
   const current = today.walkingMin;
   const pct = Math.min(Math.round((current / goal) * 100), 100);
 
   document.getElementById('walking-amount').textContent = `${current} min`;
+  document.getElementById('walking-goal-text').textContent = `/ ${goal} min`;
   document.getElementById('walking-fill').style.width = pct + '%';
   document.getElementById('walking-pct').textContent = pct + '%';
+
+  // Distance estimate: ~100 steps/min at moderate pace, 0.82m stride for 6'3"
+  const heightIn = profile.heightInches || 75;
+  const strideM = heightIn * 0.0254 * 0.415; // ~0.415 × height = stride
+  const stepsPerMin = 100;
+  const steps = current * stepsPerMin;
+  const km = (steps * strideM) / 1000;
+  const distEl = document.getElementById('walking-distance');
+  if (current > 0) {
+    distEl.textContent = `~${km.toFixed(1)} km · ${steps.toLocaleString()} steps`;
+    distEl.classList.remove('hidden');
+  } else {
+    distEl.classList.add('hidden');
+  }
 }
 
 function bindWalkingButtons() {

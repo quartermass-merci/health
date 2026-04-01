@@ -82,19 +82,20 @@ function renderCalendar() {
 }
 
 function getDayScore(day) {
+  // New streak criteria: walk 60+, weigh-in, water 1500+, morning check-in
   const checks = [
-    day.stayedInWindow,
-    day.waterMl >= (getProfile()?.waterGoalMl || 3000) * 0.8,
+    day.walkingMin >= 60,
     day.weight !== null,
-    day.stayedLowCarb,
-    day.walkingMin >= (getProfile()?.walkGoalMin || 150) * 0.5
+    day.waterMl >= 1500,
+    day.morningCheckinDone === true,
+    day.stayedLowCarb === true
   ];
 
   const done = checks.filter(c => c === true).length;
   const total = 5;
 
   let dots = '';
-  const colors = ['var(--accent)', 'var(--water)', 'var(--positive)', 'var(--accent)', 'var(--positive)'];
+  const colors = ['var(--positive)', 'var(--accent)', 'var(--water)', 'var(--accent)', 'var(--positive)'];
 
   for (let i = 0; i < total; i++) {
     const color = checks[i] ? colors[i] : 'var(--text-muted)';
@@ -114,11 +115,11 @@ function showDayDetail(dateStr) {
   let html = `<h3>${formatted}</h3>`;
 
   const rows = [
-    { label: 'Feeding Window', value: day.stayedInWindow === true ? '✓ Stayed in window' : day.stayedInWindow === false ? '✗ Broke window' : '— Not recorded' },
-    { label: 'Water', value: `${day.waterMl.toLocaleString()} / ${profile.waterGoalMl.toLocaleString()} ml` },
-    { label: 'Weight', value: day.weight !== null ? `${day.weight} lbs` : '— Not logged' },
+    { label: 'Morning Check-in', value: day.morningCheckinDone ? '✓ Done' : '— Not done' },
     { label: 'Low-Carb', value: day.stayedLowCarb === true ? '✓ Yes' : day.stayedLowCarb === false ? '✗ No' : '— Not recorded' },
-    { label: 'Walking', value: `${day.walkingMin} / ${profile.walkGoalMin} min` },
+    { label: 'Weight', value: day.weight !== null ? `${day.weight} lbs` : '— Not logged' },
+    { label: 'Water', value: `${day.waterMl.toLocaleString()} / ${(profile.waterGoalMl || 3000).toLocaleString()} ml` },
+    { label: 'Walking', value: `${day.walkingMin} / ${profile.walkGoalMin || 90} min` },
     { label: 'Sleep', value: day.sleepQuality !== null ? `${'★'.repeat(day.sleepQuality)}${'☆'.repeat(5 - day.sleepQuality)}` : '— Not rated' }
   ];
 

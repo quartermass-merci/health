@@ -5,10 +5,9 @@ import { initMorning } from './morning.js';
 import { initFeeding, destroyFeeding } from './feeding.js';
 import { initWater } from './water.js';
 import { initWeight } from './weight.js';
-import { initCarbs } from './carbs.js';
 import { initWalking } from './walking.js';
 import { initCraving } from './craving.js';
-import { initEvening } from './evening.js';
+import { initMorningCheckin } from './morning-checkin.js';
 import { initPhases } from './phases.js';
 import { initCalendar } from './calendar.js';
 import { initDashboard } from './dashboard.js';
@@ -79,9 +78,8 @@ function navigate(section) {
       initFeeding();
       initWater();
       initWeight();
-      initCarbs();
+      initMorningCheckin();
       initWalking();
-      initEvening();
       renderTrackSleep();
     }
     if (section === 'calendar') initCalendar();
@@ -162,6 +160,7 @@ function loadSettings() {
   if (!profile) return;
   document.getElementById('settings-start-weight').value = profile.startWeight;
   document.getElementById('settings-goal-weight').value = profile.goalWeight;
+  document.getElementById('settings-height').value = profile.heightInches || 75;
   document.getElementById('settings-start-date').value = profile.startDate;
   const lastBackup = getLastBackupDate();
   const note = document.getElementById('last-backup-note');
@@ -177,6 +176,7 @@ function bindSettings() {
     const profile = getProfile();
     profile.startWeight = parseFloat(document.getElementById('settings-start-weight').value) || profile.startWeight;
     profile.goalWeight = parseFloat(document.getElementById('settings-goal-weight').value) || profile.goalWeight;
+    profile.heightInches = parseInt(document.getElementById('settings-height').value) || profile.heightInches || 75;
     profile.startDate = document.getElementById('settings-start-date').value || profile.startDate;
     saveProfile(profile);
     showInsight('Settings saved!', '✅');
@@ -236,7 +236,8 @@ function showSetup() {
       feedWindowStart: 12,
       feedWindowEnd: 18,
       waterGoalMl: 3000,
-      walkGoalMin: 150
+      walkGoalMin: 90,
+      heightInches: parseInt(document.getElementById('setup-height').value) || 75
     };
     saveProfile(profile);
     saveToday(getToday());

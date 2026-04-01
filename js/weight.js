@@ -4,6 +4,53 @@ import { getActiveDay, saveActiveDay, getProfile, getAllWeights } from './store.
 import { getWeightInsight, getWeightStats } from './insights.js';
 import { showInlineInsight } from './app.js';
 
+// BMI zone chart plugin — draws colored bands behind data
+const bmiZonePlugin = {
+  id: 'bmiZones',
+  beforeDraw(chart) {
+    const profile = getProfile();
+    if (!profile) return;
+    const h = profile.heightInches || 75;
+    const factor = (h * h) / 703;
+
+    // Weight boundaries for BMI categories
+    const normalMax = 24.9 * factor;  // ~200 lbs at 6'3"
+    const overMax = 29.9 * factor;    // ~240 lbs at 6'3"
+
+    const { ctx, chartArea, scales } = chart;
+    if (!chartArea) return;
+    const yScale = scales.y;
+
+    const zones = [
+      { min: 0, max: normalMax, color: 'rgba(124, 184, 122, 0.07)', label: 'Normal' },
+      { min: normalMax, max: overMax, color: 'rgba(212, 160, 87, 0.07)', label: 'Overweight' },
+      { min: overMax, max: 9999, color: 'rgba(201, 100, 90, 0.07)', label: 'Obese' }
+    ];
+
+    ctx.save();
+    zones.forEach(z => {
+      const top = yScale.getPixelForValue(Math.min(z.max, yScale.max));
+      const bottom = yScale.getPixelForValue(Math.max(z.min, yScale.min));
+      if (top >= bottom) {
+        const clampedTop = Math.max(top, chartArea.top);
+        const clampedBottom = Math.min(bottom, chartArea.bottom);
+        if (clampedBottom > clampedTop) {
+          ctx.fillStyle = z.color;
+          ctx.fillRect(chartArea.left, clampedTop, chartArea.right - chartArea.left, clampedBottom - clampedTop);
+          // Label
+          if (clampedBottom - clampedTop > 20) {
+            ctx.fillStyle = z.color.replace(/[\d.]+\)$/, '0.3)');
+            ctx.font = '9px sans-serif';
+            ctx.textAlign = 'right';
+            ctx.fillText(z.label, chartArea.right - 4, clampedTop + 12);
+          }
+        }
+      }
+    });
+    ctx.restore();
+  }
+};
+
 let weightChart = null;
 
 export function initWeight() {
@@ -64,7 +111,14 @@ function renderWeightStats() {
     </div>`;
   }
 
-  if (stats.sevenDayAvg !== null) {
+  if (stats.weeklyLossRate !== undefined && stats.weeklyLossRate !== null) {
+    const rate = stats.weeklyLossRate;
+    const cls = rate > 0 ? 'positive' : 'neutral';
+    html += `<div class="weight-stat">
+      <div class="weight-stat-value ${cls}">${rate > 0 ? '-' : ''}${Math.abs(rate).toFixed(1)}</div>
+      <div class="weight-stat-label">lbs/week</div>
+    </div>`;
+  } else if (stats.sevenDayAvg !== null) {
     html += `<div class="weight-stat">
       <div class="weight-stat-value">${stats.sevenDayAvg.toFixed(1)}</div>
       <div class="weight-stat-label">7-day avg</div>
@@ -80,6 +134,15 @@ function renderWeightStats() {
   html += `<div class="weight-stat">
     <div class="weight-stat-value">${stats.remaining.toFixed(1)}</div>
     <div class="weight-stat-label">To ${profile.goalWeight}</div>
+  </div>`;
+
+  // BMI
+  const heightIn = profile.heightInches || 75;
+  const bmi = (dayData.weight * 703) / (heightIn * heightIn);
+  const bmiCls = bmi >= 30 ? 'negative' : bmi >= 25 ? 'text-accent' : 'positive';
+  html += `<div class="weight-stat">
+    <div class="weight-stat-value ${bmiCls}">${bmi.toFixed(1)}</div>
+    <div class="weight-stat-label">BMI</div>
   </div>`;
 
   if (stats.predictedDate) {
@@ -114,6 +177,12 @@ function renderWeightChart() {
 
   if (weightChart) weightChart.destroy();
 
+  // Tighten Y-axis to make losses visible
+  const minWeight = Math.min(...data);
+  const maxWeight = Math.max(...data);
+  const range = maxWeight - minWeight;
+  const padding = Math.max(range * 0.2, 2); // at least 2 lbs padding
+
   weightChart = new Chart(ctx, {
     type: 'line',
     data: {
@@ -131,7 +200,7 @@ function renderWeightChart() {
           fill: false
         },
         {
-          label: '7-Day Avg',
+          label: 'Trend',
           data: sma,
           borderColor: '#d4a057',
           borderWidth: 2,
@@ -178,17 +247,18 @@ function renderWeightChart() {
       },
       scales: {
         x: {
-          ticks: { color: '#5e5d58', font: { size: 9 }, maxRotation: 45 },
+          ticks: { color: '#5e5d58', font: { size: 9 }, maxRotation: 45, autoSkip: true, maxTicksLimit: Math.ceil(labels.length / 2) },
           grid: { color: 'rgba(94, 93, 88, 0.1)' }
         },
         y: {
           ticks: { color: '#5e5d58', font: { size: 9 } },
           grid: { color: 'rgba(94, 93, 88, 0.1)' },
-          suggestedMin: profile.goalWeight - 5,
-          suggestedMax: profile.startWeight + 5
+          min: minWeight - padding,
+          max: maxWeight + padding
         }
       }
-    }
+    },
+    plugins: [bmiZonePlugin]
   });
 }
 

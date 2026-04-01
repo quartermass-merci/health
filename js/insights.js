@@ -255,29 +255,37 @@ export function getCarbInsight(streak, stayedLowCarb) {
 // ===== WALKING =====
 export function getWalkingInsight(dayData, profile) {
   const min = dayData.walkingMin;
-  const goal = profile.walkGoalMin;
+  const goal = profile.walkGoalMin || 90;
   const pct = Math.round((min / goal) * 100);
-  // Rough calorie estimate for ~300lb person walking slowly: ~3.5 cal/min
   const cals = Math.round(min * 3.5);
   const h = dayHash();
 
+  // Distance calc
+  const heightIn = profile.heightInches || 75;
+  const strideM = heightIn * 0.0254 * 0.415;
+  const steps = min * 100;
+  const km = (steps * strideM) / 1000;
+
   if (pct >= 100) {
     return variant([
-      `Goal hit! ${min} min of NEAT = ~${cals} extra calories burned. That adds up fast.`,
-      `${min} minutes done! NEAT is the most sustainable fat-burning strategy. You're proving it.`,
-      `Walking goal complete! ~${cals} calories burned through movement alone today.`
+      `Goal hit! ${min} min = ~${km.toFixed(1)} km walked. That's ${steps.toLocaleString()} steps of compound interest on your health.`,
+      `${min} minutes done — ~${km.toFixed(1)} km. Every kilometer is a deposit in the bank of your transformation.`,
+      `Walking goal complete! ~${cals} cal burned, ${km.toFixed(1)} km covered. This adds up faster than you think.`,
+      `${km.toFixed(1)} km today. Each day of walking compounds. In a week, that's ${(km * 7).toFixed(0)} km.`
     ], h);
   }
   if (pct >= 50) {
     return variant([
-      `${min} min logged (~${cals} cal). ${goal - min} min to go — every step counts.`,
-      `Past halfway! ${min} minutes of low-intensity movement without triggering hunger.`
+      `${min} min (~${km.toFixed(1)} km). ${goal - min} min to go — you're past the halfway mark.`,
+      `Past halfway! ${steps.toLocaleString()} steps so far. Low-intensity movement without triggering hunger.`,
+      `${km.toFixed(1)} km so far today. Every step is an investment that compounds over months.`
     ], h);
   }
   return variant([
-    `${min} min logged. Low-intensity movement burns fat without spiking hunger.`,
-    `+${min} min of NEAT. Unlike cardio, this won't trigger compensatory eating.`,
-    `${min} minutes in. Walking tripled calorie burn vs sitting — no gym required.`
+    `${min} min (~${km.toFixed(1)} km). Every step counts. This is the easiest way to burn fat.`,
+    `+${min} min of NEAT. Unlike cardio, walking doesn't trigger compensatory eating.`,
+    `${steps.toLocaleString()} steps so far. Walking triples calorie burn vs sitting — no gym required.`,
+    `${km.toFixed(1)} km logged. Small daily deposits, massive yearly returns.`
   ], h);
 }
 
@@ -314,34 +322,40 @@ export function getSleepInsight(quality) {
   ], h);
 }
 
-// ===== PMR =====
-export function getPmrInsight() {
-  const h = dayHash();
-  return variant([
-    "PMR done! Clinical trials show this reduces evening food intake. Sleep well.",
-    "Relaxation logged. Lowering systemic arousal helps prevent nighttime eating.",
-    "PMR complete. You're resetting your nervous system for quality sleep and metabolic repair."
-  ], h);
-}
-
 // ===== MORNING =====
 export function getMorningQuote() {
   const quotes = [
+    // One day at a time
+    "Today is the only day that matters. Yesterday is banked. Tomorrow doesn't exist yet.",
+    "You don't have to be perfect for 300 days. You just have to be consistent today.",
+    "This is a one-day program, repeated. Win today. That's the whole strategy.",
+    "The only decision that counts is the next one. Make it a good one.",
+    "Don't think about the weight you have to lose. Think about the day you have to win.",
+
+    // Compound investing metaphor
+    "Every day you follow the protocol is compound interest on your health. Small deposits, massive returns.",
+    "You're not losing weight. You're building a portfolio of good days. The returns compound.",
+    "Today's walk, today's water, today's discipline — these are deposits into an account that pays dividends in months.",
+    "Consistency beats intensity. A small daily investment always outperforms a sporadic large one.",
+    "Each low-carb day compounds. Day 10 is worth more than day 1. Day 30 is exponential.",
+
+    // Protocol philosophy
     "Mechanical eating over intuitive eating — your hunger signals are still recalibrating. Trust the schedule.",
-    "This transformation is a marathon of consistency, not a sprint of deprivation.",
-    "Your path from 310 to your goal is a journey of biological alignment. One day at a time.",
-    "Waiting too long without a plan crashes blood sugar and hijacks decisions. Eat at noon, on schedule.",
-    "The 5-minute rule: when a craving hits, pause and breathe. Let the prefrontal cortex re-engage.",
     "If a lapse happens, you are forbidden from restricting tomorrow. Return to protocol. No self-punishment.",
-    "Staying away from sugar and bread is a move for cognitive preservation, not just weight loss.",
-    "Low-intensity movement is the most sustainable energy expenditure multiplier. Walk, don't run.",
     "You're not fighting willpower — you're recalibrating your endocrine system. Science is on your side.",
-    "Every day you stick to the window, you're re-anchoring cortisol and leptin. The hormones follow the schedule.",
-    "Evening mood dips are normal during transformation. They pass. The protocol holds you through them.",
     "Your feeding window isn't about deprivation — it's about giving your body time to access fat stores.",
-    "Each day of low-carb eating silences the neurochemical pull toward carbohydrates a little more.",
+    "The 5-minute rule: when a craving hits, pause and breathe. Let the prefrontal cortex re-engage.",
+
+    // Motivational grounding
+    "Low-intensity movement is the most sustainable energy expenditure multiplier. Walk, don't run.",
+    "Every day you stick to the window, you're re-anchoring cortisol and leptin. The hormones follow the schedule.",
     "Water is the silent accelerator. Dehydration mimics hunger and stalls fat loss.",
-    "Managing your emotional environment is as critical as the food on your plate."
+    "Staying away from sugar and bread is a move for cognitive preservation, not just weight loss.",
+    "The man who moves a mountain begins by carrying away small stones. You are carrying stones.",
+    "Most people overestimate what they can do in a week and underestimate what they can do in a year.",
+    "You are not the same person who started this. Every day of protocol changes your biology.",
+    "Discipline is choosing between what you want now and what you want most.",
+    "The scale measures gravity, not effort. Trust the process even when the number doesn't move."
   ];
   return quotes[dayHash() % quotes.length];
 }

@@ -16,8 +16,8 @@ function defaultProfile() {
     feedWindowStart: 12,
     feedWindowEnd: 18,
     waterGoalMl: 3000,
-    walkGoalMin: 150,
-    pmrReminderTime: '21:30'
+    walkGoalMin: 90,
+    heightInches: 75
   };
 }
 
@@ -32,13 +32,8 @@ function defaultDay(dateStr) {
     walkingMin: 0,
     walkingLogs: [],
     sleepQuality: null,
-    pmrDone: false,
-    nesMarkers: {
-      ateAfterWindow: false,
-      needFoodToSleep: false,
-      moodWorsening: false,
-      morningAnorexia: false
-    },
+    morningCheckin: null,
+    morningCheckinDone: false,
     cravingTimerUsed: 0
   };
 }
@@ -46,7 +41,12 @@ function defaultDay(dateStr) {
 // Profile
 export function getProfile() {
   const raw = localStorage.getItem(PROFILE_KEY);
-  return raw ? JSON.parse(raw) : null;
+  if (!raw) return null;
+  const p = JSON.parse(raw);
+  // Migrate: add defaults for new fields
+  if (!p.heightInches) p.heightInches = 75;
+  if (p.walkGoalMin === 150) p.walkGoalMin = 90; // migrate old default
+  return p;
 }
 
 export function saveProfile(profile) {
@@ -155,6 +155,33 @@ export function getCarbStreak() {
   return streak;
 }
 
+export function yesterdayStr() {
+  const d = new Date();
+  d.setDate(d.getDate() - 1);
+  return d.toISOString().slice(0, 10);
+}
+
+export function getProtocolStreak() {
+  const index = getDayIndex();
+  let streak = 0;
+  for (let i = index.length - 1; i >= 0; i--) {
+    const day = getDay(index[i]);
+    const isToday = index[i] === todayStr();
+    const walked = day.walkingMin >= 60;
+    const weighed = day.weight !== null;
+    const hydrated = day.waterMl >= 1500;
+    const checkedIn = day.morningCheckinDone === true;
+    if (walked && weighed && hydrated && checkedIn) {
+      streak++;
+    } else if (isToday) {
+      continue; // today is still in progress
+    } else {
+      break;
+    }
+  }
+  return streak;
+}
+
 export function getRecentDays(n) {
   const index = getDayIndex();
   const recent = index.slice(-n);
@@ -172,7 +199,7 @@ export function getDayNumber() {
 // Export
 export function exportCSV() {
   const index = getDayIndex();
-  const rows = ['date,weight,waterMl,stayedInWindow,stayedLowCarb,walkingMin,sleepQuality,pmrDone,cravingTimerUsed'];
+  const rows = ['date,weight,waterMl,stayedInWindow,stayedLowCarb,walkingMin,sleepQuality,morningCheckinDone,cravingTimerUsed'];
   for (const dateStr of index) {
     const d = getDay(dateStr);
     rows.push([
@@ -183,7 +210,7 @@ export function exportCSV() {
       d.stayedLowCarb ?? '',
       d.walkingMin,
       d.sleepQuality ?? '',
-      d.pmrDone,
+      d.morningCheckinDone || false,
       d.cravingTimerUsed
     ].join(','));
   }

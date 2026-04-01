@@ -709,34 +709,109 @@ html, body {
   margin-top: 12px;
 }
 
-/* ===== EVENING / PMR / NES ===== */
-.pmr-section { text-align: center; margin-bottom: 18px; }
-.pmr-section p { margin-bottom: 8px; font-weight: 600; font-size: 0.9rem; }
-.pmr-done { color: var(--positive); font-weight: 700; }
-.nes-title { font-weight: 600; margin-bottom: 8px; font-size: 0.9rem; }
-.nes-check {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 9px 0;
+/* ===== MORNING CHECK-IN ===== */
+.mc-question {
+  padding: 12px 0;
   border-bottom: 1px solid var(--bg-card-alt);
+}
+.mc-question:last-child { border-bottom: none; }
+.mc-q-text {
   font-size: 0.9rem;
-  cursor: pointer;
+  font-weight: 500;
+  margin-bottom: 8px;
+  color: var(--text);
 }
-.nes-check input[type="checkbox"] {
-  width: 20px;
-  height: 20px;
-  accent-color: var(--accent);
-  flex-shrink: 0;
+.mc-btn-row { gap: 8px; }
+.mc-emoji-row {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
 }
-.nes-warning {
-  background: var(--negative-dim);
-  color: var(--negative);
-  padding: 10px 12px;
+.mc-emoji {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  padding: 8px 10px;
   border-radius: var(--radius-sm);
-  margin-top: 10px;
-  font-weight: 600;
+  background: var(--bg-card-alt);
+  border: 2px solid transparent;
+  cursor: pointer;
+  font-size: 1.3rem;
+  transition: border-color 0.15s, background 0.15s;
+}
+.mc-emoji span {
+  font-size: 0.6rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+.mc-emoji.mc-selected,
+.mc-emoji:active {
+  border-color: var(--accent);
+  background: var(--accent-dim);
+}
+[data-mc].mc-selected {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 2px var(--accent-dim);
+}
+.mc-commitment { text-align: center; padding-top: 16px; }
+.mc-commit-btn { width: 100%; }
+.mc-dots {
+  display: flex;
+  gap: 3px;
+  flex-wrap: wrap;
+  margin-top: 12px;
+  justify-content: center;
+}
+.mc-done { text-align: center; padding: 8px 0; }
+.mc-done-check {
+  color: var(--positive);
+  font-weight: 700;
+  font-size: 1rem;
+  margin-bottom: 6px;
+}
+.mc-summary {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  flex-wrap: wrap;
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  margin-bottom: 8px;
+}
+.carb-streak-inline {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  margin-top: 6px;
+}
+.streak-number-sm {
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: var(--accent);
+}
+.streak-label-sm {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+.btn-outline-dim {
+  background: var(--bg-card-alt);
+  border: 1px solid var(--border);
+  color: var(--text-dim);
+  padding: 8px 20px;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
   font-size: 0.85rem;
+}
+
+/* ===== WALKING DISTANCE ===== */
+.walking-distance {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  text-align: center;
+  margin-top: 4px;
+  margin-bottom: 8px;
 }
 
 /* ===== CALENDAR ===== */
@@ -1107,6 +1182,11 @@ html, body {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
+  }
+  .dash-enter {
+    opacity: 1 !important;
+    transform: none !important;
+    animation: none !important;
   }
   .craving-fab { animation: none; }
   .water-bar-fill::after { animation: none; display: none; }

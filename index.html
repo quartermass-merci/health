@@ -61,6 +61,10 @@
         <input type="number" id="setup-goal-weight" value="250" inputmode="decimal">
       </div>
       <div class="setup-field">
+        <label>Height (inches) — 6'3" = 75</label>
+        <input type="number" id="setup-height" value="75" inputmode="numeric">
+      </div>
+      <div class="setup-field">
         <label>Start Date</label>
         <input type="date" id="setup-start-date">
       </div>
@@ -157,20 +161,12 @@
           </div>
         </div>
 
-        <!-- Carbs -->
-        <div id="track-carbs" class="track-card">
-          <h2 class="track-title">Low-Carb</h2>
-          <div class="carb-streak" id="carb-streak">
-            <span class="streak-number" id="streak-number">0</span>
-            <span class="streak-label">day streak</span>
-          </div>
-          <p class="carb-question" id="carb-question">Did you stay low-carb today?</p>
-          <div class="btn-row">
-            <button class="btn btn-success btn-lg" data-carb="yes">Yes</button>
-            <button class="btn btn-danger btn-lg" data-carb="no">No</button>
-          </div>
-          <div id="carb-insight-slot"></div>
-          <div class="carb-dots" id="carb-dots"></div>
+        <!-- Morning Check-in -->
+        <div id="track-morning-checkin" class="track-card">
+          <h2 class="track-title">Morning Check-in</h2>
+          <div id="morning-checkin-content"></div>
+          <button class="btn btn-primary" id="morning-checkin-save">Save Check-in</button>
+          <div id="morning-checkin-insight-slot" class="hidden"></div>
         </div>
 
         <!-- Walking -->
@@ -179,13 +175,14 @@
           <div class="walking-display">
             <div class="walking-header">
               <span class="walking-amount-text" id="walking-amount">0 min</span>
-              <span class="walking-goal-text">/ 150 min</span>
+              <span class="walking-goal-text" id="walking-goal-text">/ 90 min</span>
             </div>
             <div class="walking-progress-bar">
               <div class="walking-progress-fill" id="walking-fill"></div>
             </div>
             <div class="walking-pct" id="walking-pct">0%</div>
           </div>
+          <div class="walking-distance" id="walking-distance"></div>
           <div class="walk-btn-grid">
             <button class="btn btn-walk" data-walk="15">+15m</button>
             <button class="btn btn-walk" data-walk="30">+30m</button>
@@ -207,20 +204,6 @@
           </div>
         </div>
 
-        <!-- NES Evening -->
-        <div id="track-evening" class="track-card">
-          <h2 class="track-title">Evening Check-in</h2>
-          <div class="nes-section" id="nes-section">
-            <p class="nes-title">Evening habits</p>
-            <label class="nes-check"><input type="checkbox" data-nes="ateAfterWindow"> Ate after 6 PM</label>
-            <label class="nes-check"><input type="checkbox" data-nes="needFoodToSleep"> Need food to sleep</label>
-            <label class="nes-check"><input type="checkbox" data-nes="moodWorsening"> Mood worsened tonight</label>
-            <label class="nes-check"><input type="checkbox" data-nes="morningAnorexia"> No appetite this morning</label>
-            <div class="nes-warning hidden" id="nes-warning">3+ patterns flagged — worth reviewing with your protocol</div>
-          </div>
-          <button class="btn btn-primary" id="evening-save">Save</button>
-          <div id="evening-insight-slot" class="hidden"></div>
-        </div>
       </section>
 
       <!-- Calendar -->
@@ -253,6 +236,10 @@
           <div class="settings-field">
             <label>Goal Weight</label>
             <input type="number" id="settings-goal-weight" inputmode="decimal">
+          </div>
+          <div class="settings-field">
+            <label>Height (inches)</label>
+            <input type="number" id="settings-height" inputmode="numeric">
           </div>
           <div class="settings-field">
             <label>Start Date</label>
@@ -318,7 +305,7 @@
   <script type="module" src="js/carbs.js"></script>
   <script type="module" src="js/walking.js"></script>
   <script type="module" src="js/craving.js"></script>
-  <script type="module" src="js/evening.js"></script>
+  <script type="module" src="js/morning-checkin.js"></script>
   <script type="module" src="js/phases.js"></script>
   <script type="module" src="js/calendar.js"></script>
   <script type="module" src="js/dashboard.js"></script>

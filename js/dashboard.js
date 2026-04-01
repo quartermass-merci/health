@@ -1,12 +1,11 @@
 // dashboard.js — Redesigned: hero timer, weight centerpiece, compact trackers
 // OVERDRIVE: staggered spring entry, count-up numbers, time-of-day gradient, milestone particles
 
-import { getToday, getProfile, getDayNumber, getAllWeights, getCarbStreak } from './store.js';
+import { getToday, getProfile, getDayNumber, getAllWeights, getProtocolStreak } from './store.js';
 import { getCurrentPhase } from './phases.js';
 import { getFeedingStatus } from './feeding.js';
 import { getWaterStatus } from './water.js';
 import { getWeightSummary } from './weight.js';
-import { getCarbStatus } from './carbs.js';
 import { getWalkingStatus } from './walking.js';
 import { predictGoalDate } from './insights.js';
 import { navigateTo } from './app.js';
@@ -84,14 +83,14 @@ function renderMilestone() {
   const profile = getProfile();
   const weights = getAllWeights();
   const totalLost = weights.length > 0 ? profile.startWeight - weights[weights.length - 1].weight : 0;
-  const streak = getCarbStreak();
+  const streak = getProtocolStreak();
 
   // Check for milestones worth celebrating
   let milestone = null;
   if (totalLost >= 50) milestone = { num: `${totalLost.toFixed(0)} lbs`, text: 'lost. You are rewriting your biology.' };
   else if (totalLost >= 25) milestone = { num: `${totalLost.toFixed(0)} lbs`, text: 'gone. Past the halfway mark.' };
   else if (totalLost >= 10) milestone = { num: `${totalLost.toFixed(0)} lbs`, text: 'down. The protocol is working.' };
-  else if (streak >= 30) milestone = { num: `${streak} days`, text: 'low-carb. Fat is your primary fuel now.' };
+  else if (streak >= 14) milestone = { num: `${streak} days`, text: 'protocol streak. Consistency compounds.' };
   else if (dayNum === 90) milestone = { num: 'Phase 1 Complete', text: 'Hormones re-anchored. Phase 2 begins.' };
   else if (dayNum === 7) milestone = { num: '1 week', text: 'in. The hardest part is behind you.' };
 
@@ -101,7 +100,7 @@ function renderMilestone() {
       <div class="milestone-text">${milestone.text}</div>
     </div>`;
     // Fire particles for big milestones
-    if (totalLost >= 10 || streak >= 30 || dayNum === 90) {
+    if (totalLost >= 10 || streak >= 14 || dayNum === 90) {
       fireMilestoneParticles();
     }
   } else {
@@ -236,14 +235,14 @@ function renderCompact() {
 function renderStatus() {
   const el = document.getElementById('dashboard-status');
   const today = getToday();
-  const carbs = getCarbStatus();
+  const streak = getProtocolStreak();
 
   const sleepText = today.sleepQuality !== null ? `${'★'.repeat(today.sleepQuality)}${'☆'.repeat(5 - today.sleepQuality)}` : '—';
 
   el.innerHTML = `<div class="dash-status-row">
     <div class="dash-streak" data-nav="track">
-      <div class="dash-streak-num" style="color:${carbs.streak > 0 ? 'var(--accent)' : 'var(--text-muted)'}">${carbs.streak}</div>
-      <div class="dash-streak-label">Low-carb streak</div>
+      <div class="dash-streak-num" style="color:${streak > 0 ? 'var(--accent)' : 'var(--text-muted)'}">${streak}</div>
+      <div class="dash-streak-label">Protocol streak</div>
     </div>
     <div class="dash-streak" data-nav="track">
       <div class="dash-streak-num" style="color:var(--text-dim)">${sleepText}</div>
