@@ -746,14 +746,26 @@ html, body {
   text-transform: uppercase;
   letter-spacing: 0.03em;
 }
-.mc-emoji.mc-selected,
-.mc-emoji:active {
+/* Selected state — dramatic visual lock-in */
+.mc-selected {
+  box-shadow: 0 0 0 3px var(--accent) !important;
+  transform: scale(1.02);
+  transition: all 0.15s ease;
+}
+/* Dim the unselected sibling when one is picked */
+.mc-answered .btn:not(.mc-selected),
+.mc-answered .mc-emoji:not(.mc-selected) {
+  opacity: 0.25 !important;
+  transform: scale(0.95);
+  transition: all 0.15s ease;
+}
+.mc-emoji.mc-selected {
   border-color: var(--accent);
   background: var(--accent-dim);
 }
-[data-mc].mc-selected {
-  border-color: var(--accent);
-  box-shadow: 0 0 0 2px var(--accent-dim);
+#mc-commit.mc-selected {
+  background: var(--positive) !important;
+  box-shadow: 0 0 0 3px var(--positive) !important;
 }
 .mc-commitment { text-align: center; padding-top: 16px; }
 .mc-commit-btn { width: 100%; }
