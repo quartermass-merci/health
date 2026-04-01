@@ -1,6 +1,6 @@
 // evening.js — NES check-in
 
-import { getToday, saveToday } from './store.js';
+import { getActiveDay, saveActiveDay } from './store.js';
 import { showInlineInsight } from './app.js';
 
 export function initEvening() {
@@ -9,7 +9,7 @@ export function initEvening() {
 }
 
 function renderEvening() {
-  const today = getToday();
+  const today = getActiveDay();
 
   // NES checkboxes
   if (today.nesMarkers) {
@@ -29,13 +29,13 @@ function bindEveningButtons() {
 
   // Save evening
   document.getElementById('evening-save').onclick = () => {
-    const today = getToday();
+    const today = getActiveDay();
     const markers = {};
     document.querySelectorAll('[data-nes]').forEach(cb => {
       markers[cb.dataset.nes] = cb.checked;
     });
     today.nesMarkers = markers;
-    saveToday(today);
+    saveActiveDay(today);
     showInlineInsight('evening-insight-slot', 'Evening check-in saved. Rest well tonight.');
   };
 }
@@ -51,7 +51,7 @@ function checkNesWarning() {
 }
 
 export function getEveningStatus() {
-  const today = getToday();
+  const today = getActiveDay();
   return {
     nesCount: Object.values(today.nesMarkers || {}).filter(Boolean).length
   };

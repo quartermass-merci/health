@@ -92,6 +92,33 @@ export function saveToday(dayData) {
   saveDay(todayStr(), dayData);
 }
 
+// Active date system — allows editing past days
+let activeDate = null;
+
+export function setActiveDate(dateStr) {
+  activeDate = dateStr;
+}
+
+export function getActiveDate() {
+  return activeDate || todayStr();
+}
+
+export function isViewingPastDay() {
+  return activeDate !== null && activeDate !== todayStr();
+}
+
+export function getActiveDay() {
+  return getDay(getActiveDate());
+}
+
+export function saveActiveDay(dayData) {
+  saveDay(getActiveDate(), dayData);
+}
+
+export function resetToToday() {
+  activeDate = null;
+}
+
 // Aggregations
 export function getAllWeights() {
   const index = getDayIndex();

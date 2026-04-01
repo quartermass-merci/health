@@ -811,6 +811,14 @@ html, body {
 .cal-day .cal-dots { display: flex; gap: 2px; margin-top: 2px; }
 .cal-day .cal-dot-sm { width: 4px; height: 4px; border-radius: 1px; }
 
+.cal-hint {
+  text-align: center;
+  color: var(--text-muted);
+  font-size: var(--text-xs);
+  margin: 10px 0 0;
+  opacity: 0.7;
+}
+
 .calendar-detail {
   background: var(--bg-card);
   border-radius: var(--radius);
@@ -874,6 +882,32 @@ html, body {
   font-size: 0.8rem;
   color: var(--text-dim);
   margin-top: 4px;
+}
+
+/* ===== DATE BANNER (past-day editing) ===== */
+.date-banner {
+  background: var(--accent-dim);
+  border: 1px solid rgba(212, 160, 87, 0.2);
+  border-radius: var(--radius);
+  padding: 10px 14px;
+  margin-bottom: var(--space-md);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: var(--text-sm);
+  font-weight: 600;
+  color: var(--accent);
+}
+.date-banner-btn {
+  background: none;
+  border: none;
+  color: var(--text-dim);
+  font-size: var(--text-xs);
+  font-weight: 600;
+  cursor: pointer;
+  padding: 4px 8px;
+  text-decoration: underline;
+  text-underline-offset: 2px;
 }
 
 /* ===== UTILITIES ===== */

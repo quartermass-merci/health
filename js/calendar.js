@@ -1,7 +1,7 @@
 // calendar.js — Streak calendar view
 
 import { getDay, getDayIndex, getProfile, todayString } from './store.js';
-import { navigateTo } from './app.js';
+import { navigateTo, navigateToDate } from './app.js';
 
 let currentMonth = new Date().getMonth();
 let currentYear = new Date().getFullYear();
@@ -126,6 +126,15 @@ function showDayDetail(dateStr) {
     html += `<div class="detail-row"><span>${r.label}</span><span>${r.value}</span></div>`;
   });
 
+  html += `<button class="btn btn-primary cal-edit-btn" id="cal-edit-day" style="margin-top:12px;width:100%">Edit this day</button>`;
+
   detail.innerHTML = html;
   detail.classList.remove('hidden');
+
+  // Scroll detail into view so user sees it
+  setTimeout(() => detail.scrollIntoView({ behavior: 'smooth', block: 'nearest' }), 50);
+
+  document.getElementById('cal-edit-day').onclick = () => {
+    navigateToDate(dateStr);
+  };
 }

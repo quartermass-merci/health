@@ -1,6 +1,6 @@
 // weight.js — Weight input, stats, and Chart.js graph with inline insights
 
-import { getToday, saveToday, getProfile, getAllWeights } from './store.js';
+import { getActiveDay, saveActiveDay, getProfile, getAllWeights } from './store.js';
 import { getWeightInsight, getWeightStats } from './insights.js';
 import { showInlineInsight } from './app.js';
 
@@ -16,7 +16,7 @@ function bindWeightInput() {
   const input = document.getElementById('weight-input');
   const btn = document.getElementById('weight-log');
 
-  const today = getToday();
+  const today = getActiveDay();
   if (today.weight !== null) {
     input.value = today.weight;
   }
@@ -25,10 +25,10 @@ function bindWeightInput() {
     const val = parseFloat(input.value);
     if (!val || val < 50 || val > 999) return;
 
-    const today = getToday();
+    const today = getActiveDay();
     const profile = getProfile();
     today.weight = val;
-    saveToday(today);
+    saveActiveDay(today);
 
     renderWeightStats();
     renderWeightChart();
@@ -41,7 +41,7 @@ function bindWeightInput() {
 }
 
 function renderWeightStats() {
-  const today = getToday();
+  const today = getActiveDay();
   const profile = getProfile();
   const statsEl = document.getElementById('weight-stats');
 
@@ -193,7 +193,7 @@ function renderWeightChart() {
 }
 
 export function getWeightSummary() {
-  const today = getToday();
+  const today = getActiveDay();
   const profile = getProfile();
   if (!profile) return { text: 'Not logged', totalLost: 0 };
   if (today.weight === null) return { text: 'Not logged', totalLost: profile.startWeight - (getAllWeights().slice(-1)[0]?.weight ?? profile.startWeight) };

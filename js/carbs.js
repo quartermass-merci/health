@@ -1,6 +1,6 @@
 // carbs.js — Low-carb daily check + streak with inline insights
 
-import { getToday, saveToday, getCarbStreak, getRecentDays } from './store.js';
+import { getActiveDay, saveActiveDay, getCarbStreak, getRecentDays } from './store.js';
 import { getCarbInsight } from './insights.js';
 import { showInlineInsight } from './app.js';
 
@@ -10,7 +10,7 @@ export function initCarbs() {
 }
 
 function renderCarbs() {
-  const today = getToday();
+  const today = getActiveDay();
   const streak = getCarbStreak();
 
   document.getElementById('streak-number').textContent = streak;
@@ -41,9 +41,9 @@ function bindCarbButtons() {
   document.querySelectorAll('[data-carb]').forEach(btn => {
     btn.onclick = () => {
       const val = btn.dataset.carb === 'yes';
-      const today = getToday();
+      const today = getActiveDay();
       today.stayedLowCarb = val;
-      saveToday(today);
+      saveActiveDay(today);
 
       const streak = getCarbStreak();
       renderCarbs();
@@ -53,7 +53,7 @@ function bindCarbButtons() {
 }
 
 export function getCarbStatus() {
-  const today = getToday();
+  const today = getActiveDay();
   const streak = getCarbStreak();
   return {
     answered: today.stayedLowCarb !== null,

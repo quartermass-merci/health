@@ -1,6 +1,6 @@
 // walking.js — Walking/NEAT tracker with bar progress
 
-import { getToday, saveToday, getProfile } from './store.js';
+import { getActiveDay, saveActiveDay, getProfile } from './store.js';
 import { getWalkingInsight } from './insights.js';
 import { showInlineInsight } from './app.js';
 
@@ -10,7 +10,7 @@ export function initWalking() {
 }
 
 function renderWalking() {
-  const today = getToday();
+  const today = getActiveDay();
   const profile = getProfile();
   const goal = profile.walkGoalMin;
   const current = today.walkingMin;
@@ -25,7 +25,7 @@ function bindWalkingButtons() {
   document.querySelectorAll('[data-walk]').forEach(btn => {
     btn.onclick = () => {
       const min = parseInt(btn.dataset.walk);
-      const today = getToday();
+      const today = getActiveDay();
       const profile = getProfile();
 
       if (min < 0) {
@@ -39,7 +39,7 @@ function bindWalkingButtons() {
           time: new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })
         });
       }
-      saveToday(today);
+      saveActiveDay(today);
       renderWalking();
       if (min > 0) showInlineInsight('walking-insight-slot', getWalkingInsight(today, profile));
     };
@@ -47,7 +47,7 @@ function bindWalkingButtons() {
 }
 
 export function getWalkingStatus() {
-  const today = getToday();
+  const today = getActiveDay();
   const profile = getProfile();
   if (!profile) return { text: '0 / 150 min', pct: 0 };
   const pct = Math.min(Math.round((today.walkingMin / profile.walkGoalMin) * 100), 100);

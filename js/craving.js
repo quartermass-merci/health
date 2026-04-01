@@ -1,6 +1,6 @@
 // craving.js — 5-minute craving timer with breathing guidance
 
-import { getToday, saveToday } from './store.js';
+import { getActiveDay, saveActiveDay } from './store.js';
 import { getCravingInsight } from './insights.js';
 import { showInsight } from './app.js';
 
@@ -29,9 +29,9 @@ export function initCraving() {
 
     if (secondsLeft < TOTAL_SECONDS - 10) {
       // They waited at least 10 seconds
-      const today = getToday();
+      const today = getActiveDay();
       today.cravingTimerUsed = (today.cravingTimerUsed || 0) + 1;
-      saveToday(today);
+      saveActiveDay(today);
       showInsight(getCravingInsight(), '🧘');
     }
   };
@@ -64,9 +64,9 @@ function startCravingTimer() {
       document.getElementById('craving-breath-text').textContent = 'You did it. The craving has passed.';
       document.getElementById('craving-timer-display').textContent = '0:00';
 
-      const today = getToday();
+      const today = getActiveDay();
       today.cravingTimerUsed = (today.cravingTimerUsed || 0) + 1;
-      saveToday(today);
+      saveActiveDay(today);
 
       setTimeout(() => {
         modal.classList.add('hidden');

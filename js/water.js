@@ -1,6 +1,6 @@
 // water.js — Water intake tracker with bar progress
 
-import { getToday, saveToday, getProfile } from './store.js';
+import { getActiveDay, saveActiveDay, getProfile } from './store.js';
 import { getWaterInsight } from './insights.js';
 import { showInlineInsight } from './app.js';
 
@@ -10,7 +10,7 @@ export function initWater() {
 }
 
 function renderWater() {
-  const today = getToday();
+  const today = getActiveDay();
   const profile = getProfile();
   const goal = profile.waterGoalMl;
   const current = today.waterMl;
@@ -25,7 +25,7 @@ function bindWaterButtons() {
   document.querySelectorAll('[data-water]').forEach(btn => {
     btn.onclick = () => {
       const amount = parseInt(btn.dataset.water);
-      const today = getToday();
+      const today = getActiveDay();
       const profile = getProfile();
 
       today.waterMl = Math.max(0, today.waterMl + amount);
@@ -37,7 +37,7 @@ function bindWaterButtons() {
       } else if (today.waterLogs.length > 0) {
         today.waterLogs.pop();
       }
-      saveToday(today);
+      saveActiveDay(today);
       renderWater();
       showInlineInsight('water-insight-slot', getWaterInsight(today, profile));
     };
@@ -45,7 +45,7 @@ function bindWaterButtons() {
 }
 
 export function getWaterStatus() {
-  const today = getToday();
+  const today = getActiveDay();
   const profile = getProfile();
   if (!profile) return { text: '0 / 3000 ml', pct: 0 };
   const pct = Math.round((today.waterMl / profile.waterGoalMl) * 100);

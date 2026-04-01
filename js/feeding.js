@@ -1,6 +1,6 @@
 // feeding.js — Feeding timer with animated arc and color transitions
 
-import { getToday, saveToday, getProfile } from './store.js';
+import { getActiveDay, saveActiveDay, getProfile } from './store.js';
 import { getFastingInsight } from './insights.js';
 import { showInlineInsight } from './app.js';
 
@@ -87,7 +87,7 @@ function updateFeedingDisplay() {
     arc.style.strokeDasharray = ARC_CIRCUMFERENCE;
     arc.style.strokeDashoffset = ARC_CIRCUMFERENCE * (1 - fastPct);
 
-    const today = getToday();
+    const today = getActiveDay();
     if (today.stayedInWindow === null) {
       checkEl.classList.remove('hidden');
     } else {
@@ -100,9 +100,9 @@ function bindFeedingButtons() {
   document.querySelectorAll('[data-feeding]').forEach(btn => {
     btn.onclick = () => {
       const val = btn.dataset.feeding === 'yes';
-      const today = getToday();
+      const today = getActiveDay();
       today.stayedInWindow = val;
-      saveToday(today);
+      saveActiveDay(today);
 
       const profile = getProfile();
       const insight = getFastingInsight(new Date(), profile.feedWindowStart, profile.feedWindowEnd);

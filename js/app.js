@@ -1,6 +1,6 @@
-// app.js — Boot, routing, daily reset, toast system
+// app.js — Boot, routing, daily reset, toast system, active date
 
-import { hasProfile, saveProfile, getProfile, getToday, saveToday, getDayNumber, todayString, exportCSV, exportJSON, importJSON, clearAllData, getLastBackupDate } from './store.js';
+import { hasProfile, saveProfile, getProfile, getToday, saveToday, getActiveDay, saveActiveDay, setActiveDate, resetToToday, isViewingPastDay, getActiveDate, getDayNumber, todayString, exportCSV, exportJSON, importJSON, clearAllData, getLastBackupDate } from './store.js';
 import { initMorning } from './morning.js';
 import { initFeeding, destroyFeeding } from './feeding.js';
 import { initWater } from './water.js';
@@ -37,7 +37,6 @@ export function showInlineInsight(slotId, message) {
   slot.textContent = message;
   slot.classList.add('inline-insight');
   slot.classList.remove('hidden');
-  // Auto-hide after 8 seconds
   setTimeout(() => {
     slot.classList.add('hidden');
   }, 8000);
@@ -68,9 +67,15 @@ function navigate(section) {
     document.getElementById('app-title').textContent = titles[section] || 'Dashboard';
     currentSection = section;
 
+    // Reset to today when leaving track
+    if (section !== 'track') {
+      resetToToday();
+    }
+
     // Render section
     if (section === 'dashboard') initDashboard();
     if (section === 'track') {
+      renderDateBanner();
       initFeeding();
       initWater();
       initWeight();
@@ -86,7 +91,6 @@ function navigate(section) {
     document.querySelector('.app-main').scrollTop = 0;
   };
 
-  // Use View Transitions API if available (Direction B)
   if (document.startViewTransition) {
     document.startViewTransition(doNavigate);
   } else {
@@ -98,8 +102,39 @@ export function navigateTo(section) {
   navigate(section);
 }
 
+// Navigate to track for a specific date (called from calendar)
+export function navigateToDate(dateStr) {
+  setActiveDate(dateStr);
+  // Force re-render even if already on track
+  if (currentSection === 'track') {
+    currentSection = null;
+  }
+  navigate('track');
+}
+
+// Date banner — shows when editing a past day
+function renderDateBanner() {
+  const banner = document.getElementById('date-banner');
+  if (!banner) return;
+
+  if (isViewingPastDay()) {
+    const date = new Date(getActiveDate() + 'T00:00:00');
+    const formatted = date.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
+    banner.innerHTML = `<span>Editing ${formatted}</span><button class="date-banner-btn" id="back-to-today">Back to today</button>`;
+    banner.classList.remove('hidden');
+    document.getElementById('back-to-today').onclick = () => {
+      resetToToday();
+      currentSection = null;
+      navigate('track');
+    };
+  } else {
+    banner.classList.add('hidden');
+    banner.innerHTML = '';
+  }
+}
+
 function renderTrackSleep() {
-  const day = getToday();
+  const day = getActiveDay();
   const card = document.getElementById('track-sleep');
   if (day.sleepQuality !== null) {
     card.classList.add('hidden');
@@ -110,9 +145,9 @@ function renderTrackSleep() {
       star.classList.remove('active');
       star.onclick = () => {
         const val = parseInt(star.dataset.value);
-        const today = getToday();
-        today.sleepQuality = val;
-        saveToday(today);
+        const d = getActiveDay();
+        d.sleepQuality = val;
+        saveActiveDay(d);
         stars.forEach(s => s.classList.toggle('active', parseInt(s.dataset.value) <= val));
         import('./insights.js').then(m => showInsight(m.getSleepInsight(val), '😴'));
         setTimeout(() => card.classList.add('hidden'), 1500);
@@ -201,11 +236,9 @@ function showSetup() {
       feedWindowStart: 12,
       feedWindowEnd: 18,
       waterGoalMl: 3000,
-      walkGoalMin: 150,
-      pmrReminderTime: '21:30'
+      walkGoalMin: 150
     };
     saveProfile(profile);
-    // Create today's record
     saveToday(getToday());
     document.getElementById('setup-screen').classList.add('hidden');
     document.getElementById('app').classList.remove('hidden');
@@ -230,7 +263,7 @@ function onVisibilityChange() {
     ensureToday();
     updateDayBadge();
     if (currentSection === 'dashboard') initDashboard();
-    if (currentSection === 'track') initFeeding();
+    if (currentSection === 'track' && !isViewingPastDay()) initFeeding();
   }
 }
 
@@ -239,9 +272,12 @@ function bootApp() {
   ensureToday();
   updateDayBadge();
 
-  // Bind nav
+  // Bind nav — reset to today on nav tap
   document.querySelectorAll('.nav-btn').forEach(btn => {
-    btn.onclick = () => navigate(btn.dataset.section);
+    btn.onclick = () => {
+      resetToToday();
+      navigate(btn.dataset.section);
+    };
   });
 
   bindSettings();
@@ -255,9 +291,7 @@ function bootApp() {
     initMorning();
   }
 
-  // Start on dashboard
   navigate('dashboard');
-
   document.addEventListener('visibilitychange', onVisibilityChange);
 }
 
