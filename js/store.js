@@ -158,15 +158,33 @@ export function getAfter6Streak() {
 export function getCarbStreak() {
   const index = getDayIndex();
   let streak = 0;
+  const today = todayStr();
   for (let i = index.length - 1; i >= 0; i--) {
     const day = getDay(index[i]);
-    if (day.stayedLowCarb === true) {
+    // Check stayedLowCarb on the day record (set by next day's check-in).
+    // Also check if the NEXT day's morningCheckin.lowCarbYesterday confirms it
+    // (handles days where stayedLowCarb wasn't backfilled due to old bug).
+    let lowCarb = day.stayedLowCarb;
+    if (lowCarb === null || lowCarb === undefined) {
+      // Look at the next day's check-in for confirmation
+      const nextIdx = i + 1;
+      if (nextIdx < index.length) {
+        const nextDay = getDay(index[nextIdx]);
+        if (nextDay.morningCheckin && nextDay.morningCheckin.lowCarbYesterday !== undefined) {
+          lowCarb = nextDay.morningCheckin.lowCarbYesterday;
+          // Backfill the missing data while we're at it
+          day.stayedLowCarb = lowCarb;
+          saveDay(index[i], day);
+        }
+      }
+    }
+    if (lowCarb === true) {
       streak++;
-    } else if (day.stayedLowCarb === false) {
+    } else if (lowCarb === false) {
       break;
     } else {
-      // null means not answered yet — if it's today, skip; otherwise break
-      if (index[i] === todayStr()) continue;
+      // Still null — if it's today, skip (tomorrow's check-in will fill it); otherwise break
+      if (index[i] === today) continue;
       break;
     }
   }

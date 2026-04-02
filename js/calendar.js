@@ -134,7 +134,6 @@ function showDayDetail(dateStr) {
 
   const rows = [
     { label: 'Morning Check-in', value: checkinValue },
-    { label: 'Low-Carb', value: day.stayedLowCarb === true ? '✓ Yes' : day.stayedLowCarb === false ? '✗ No' : '— Not recorded' },
     { label: 'Weight', value: day.weight !== null ? `${day.weight} lbs` : '— Not logged' },
     { label: 'Water', value: `${day.waterMl.toLocaleString()} / ${(profile.waterGoalMl || 3000).toLocaleString()} ml` },
     { label: 'Walking', value: `${day.walkingMin} / ${profile.walkGoalMin || 90} min` },
