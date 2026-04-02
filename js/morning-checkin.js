@@ -125,14 +125,12 @@ function saveAnswer(key, value) {
     if (after6StreakEl) after6StreakEl.textContent = getAfter6Streak();
   }
 
-  // Special: low-carb answer also saves to yesterday
+  // Special: low-carb answer also saves to yesterday (always update on edit)
   if (key === 'lowCarbYesterday') {
     const yStr = yesterdayStr();
     const yesterday = getDay(yStr);
-    if (yesterday.stayedLowCarb === null) {
-      yesterday.stayedLowCarb = value;
-      saveDay(yStr, yesterday);
-    }
+    yesterday.stayedLowCarb = value;
+    saveDay(yStr, yesterday);
     // Update streak display
     const streak = getCarbStreak();
     const streakEl = document.getElementById('mc-streak');

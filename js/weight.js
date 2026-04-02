@@ -75,6 +75,7 @@ export function initWeight() {
   updateDial();
   bindDialTouch();
   bindDialButtons();
+  bindDialEdit();
   bindLockIn();
   renderWeightStats();
   renderWeightChart();
@@ -107,9 +108,11 @@ function updateDial() {
     knob.setAttribute('cy', ky.toFixed(1));
   }
 
-  // Value display
+  // Value display — only update if not currently editing
   const valEl = document.getElementById('dial-value');
-  if (valEl) valEl.textContent = currentDialWeight.toFixed(1);
+  if (valEl && !valEl.classList.contains('editing')) {
+    valEl.textContent = currentDialWeight.toFixed(1);
+  }
 }
 
 function bindDialTouch() {
@@ -118,7 +121,22 @@ function bindDialTouch() {
 
   let isDragging = false;
 
+  // Only start drag if touch is near the arc (outer ring), not the center
+  function isNearArc(px, py) {
+    const rect = svg.getBoundingClientRect();
+    const scale = 240 / rect.width;
+    const lx = (px - rect.left) * scale;
+    const ly = (py - rect.top) * scale;
+    const dx = lx - CX;
+    const dy = ly - CY;
+    const dist = Math.sqrt(dx * dx + dy * dy);
+    // Only respond if touch is within 35px of the arc (RADIUS=100)
+    return dist > 55 && dist < 140;
+  }
+
   svg.addEventListener('touchstart', (e) => {
+    const t = e.touches[0];
+    if (!isNearArc(t.clientX, t.clientY)) return; // Let scroll pass through
     isDragging = true;
     handleTouch(e);
     e.preventDefault();
@@ -134,8 +152,11 @@ function bindDialTouch() {
 
   // Mouse for desktop testing
   svg.addEventListener('mousedown', (e) => {
-    isDragging = true;
-    handleMouse(e);
+    const rect = svg.getBoundingClientRect();
+    if (isNearArc(e.clientX, e.clientY)) {
+      isDragging = true;
+      handleMouse(e);
+    }
   });
   window.addEventListener('mousemove', (e) => {
     if (!isDragging) return;
@@ -178,6 +199,64 @@ function bindDialTouch() {
     currentDialWeight = Math.round(currentDialWeight * 10) / 10;
     updateDial();
   }
+}
+
+function bindDialEdit() {
+  const valEl = document.getElementById('dial-value');
+  if (!valEl) return;
+
+  // Make the dial-display tappable
+  const display = valEl.parentElement;
+  if (display) display.style.pointerEvents = 'auto';
+  valEl.style.pointerEvents = 'auto';
+  valEl.style.cursor = 'pointer';
+
+  valEl.onclick = () => {
+    if (valEl.classList.contains('editing')) return;
+    valEl.classList.add('editing');
+
+    const input = document.createElement('input');
+    input.type = 'number';
+    input.inputMode = 'decimal';
+    input.step = '0.1';
+    input.value = currentDialWeight.toFixed(1);
+    input.className = 'dial-edit-input';
+    input.style.cssText = `
+      width: 5ch;
+      background: transparent;
+      border: none;
+      border-bottom: 2px solid var(--accent);
+      color: #fff;
+      font-size: inherit;
+      font-family: inherit;
+      font-weight: inherit;
+      text-align: center;
+      outline: none;
+      padding: 0;
+      caret-color: var(--accent);
+    `;
+
+    valEl.textContent = '';
+    valEl.appendChild(input);
+    input.focus();
+    input.select();
+
+    const commit = () => {
+      const val = parseFloat(input.value);
+      if (!isNaN(val) && val >= dialMin && val <= dialMax) {
+        currentDialWeight = Math.round(val * 10) / 10;
+      }
+      valEl.classList.remove('editing');
+      valEl.textContent = currentDialWeight.toFixed(1);
+      updateDial();
+    };
+
+    input.onblur = commit;
+    input.onkeydown = (e) => {
+      if (e.key === 'Enter') { e.preventDefault(); input.blur(); }
+      if (e.key === 'Escape') { input.value = currentDialWeight.toFixed(1); input.blur(); }
+    };
+  };
 }
 
 function bindDialButtons() {

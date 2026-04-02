@@ -112,10 +112,28 @@ function showDayDetail(dateStr) {
   const date = new Date(dateStr + 'T00:00:00');
   const formatted = date.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' });
 
+  // Highlight selected day in grid
+  document.querySelectorAll('.cal-day.cal-selected').forEach(el => el.classList.remove('cal-selected'));
+  const selectedCell = document.querySelector(`.cal-day[data-date="${dateStr}"]`);
+  if (selectedCell) selectedCell.classList.add('cal-selected');
+
+  // Morning check-in detail
+  const checkin = day.morningCheckin || {};
+  let checkinValue = '— Not done';
+  if (day.morningCheckinDone) {
+    const parts = [];
+    if (checkin.lowCarbYesterday === true) parts.push('Low-carb ✓');
+    else if (checkin.lowCarbYesterday === false) parts.push('Low-carb ✗');
+    if (checkin.ateAfterSixPm === false) parts.push('No late eating ✓');
+    else if (checkin.ateAfterSixPm === true) parts.push('Ate after 6 ✗');
+    if (checkin.feeling) parts.push(checkin.feeling.charAt(0).toUpperCase() + checkin.feeling.slice(1));
+    checkinValue = parts.length ? parts.join(' · ') : '✓ Done';
+  }
+
   let html = `<h3>${formatted}</h3>`;
 
   const rows = [
-    { label: 'Morning Check-in', value: day.morningCheckinDone ? '✓ Done' : '— Not done' },
+    { label: 'Morning Check-in', value: checkinValue },
     { label: 'Low-Carb', value: day.stayedLowCarb === true ? '✓ Yes' : day.stayedLowCarb === false ? '✗ No' : '— Not recorded' },
     { label: 'Weight', value: day.weight !== null ? `${day.weight} lbs` : '— Not logged' },
     { label: 'Water', value: `${day.waterMl.toLocaleString()} / ${(profile.waterGoalMl || 3000).toLocaleString()} ml` },
@@ -127,13 +145,13 @@ function showDayDetail(dateStr) {
     html += `<div class="detail-row"><span>${r.label}</span><span>${r.value}</span></div>`;
   });
 
-  html += `<button class="btn btn-primary cal-edit-btn" id="cal-edit-day" style="margin-top:12px;width:100%">Edit this day</button>`;
+  html += `<button class="btn btn-primary cal-edit-btn" id="cal-edit-day" style="margin-top:12px;width:100%">Edit this day →</button>`;
 
   detail.innerHTML = html;
   detail.classList.remove('hidden');
 
   // Scroll detail into view so user sees it
-  setTimeout(() => detail.scrollIntoView({ behavior: 'smooth', block: 'nearest' }), 50);
+  setTimeout(() => detail.scrollIntoView({ behavior: 'smooth', block: 'start' }), 80);
 
   document.getElementById('cal-edit-day').onclick = () => {
     navigateToDate(dateStr);

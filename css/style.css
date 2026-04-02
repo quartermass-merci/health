@@ -28,14 +28,14 @@
   --phase2: #ffd700;
   --phase3: #00ff41;
 
-  /* Fluid type scale */
-  --text-xs: clamp(0.65rem, 0.6rem + 0.25vw, 0.72rem);
-  --text-sm: clamp(0.78rem, 0.72rem + 0.3vw, 0.85rem);
-  --text-base: clamp(0.88rem, 0.82rem + 0.3vw, 0.95rem);
-  --text-lg: clamp(1.05rem, 0.95rem + 0.5vw, 1.2rem);
-  --text-xl: clamp(1.3rem, 1.1rem + 1vw, 1.6rem);
-  --text-2xl: clamp(2rem, 1.6rem + 2vw, 2.6rem);
-  --text-3xl: clamp(2.6rem, 2rem + 3vw, 3.4rem);
+  /* Fluid type scale — 25% larger for mobile readability */
+  --text-xs: clamp(0.8rem, 0.75rem + 0.3vw, 0.9rem);
+  --text-sm: clamp(0.95rem, 0.88rem + 0.35vw, 1.06rem);
+  --text-base: clamp(1.1rem, 1.02rem + 0.4vw, 1.19rem);
+  --text-lg: clamp(1.3rem, 1.18rem + 0.6vw, 1.5rem);
+  --text-xl: clamp(1.6rem, 1.38rem + 1.2vw, 2rem);
+  --text-2xl: clamp(2.5rem, 2rem + 2.5vw, 3.25rem);
+  --text-3xl: clamp(3.25rem, 2.5rem + 3.75vw, 4.25rem);
 
   /* Varied spacing for rhythm */
   --space-xs: 4px;
@@ -77,13 +77,13 @@ html, body {
   justify-content: center;
   border: none;
   border-radius: var(--radius-sm);
-  font-size: 0.95rem;
+  font-size: 1.1rem;
   font-weight: 600;
-  padding: 12px 20px;
+  padding: 14px 22px;
   cursor: pointer;
   transition: transform 0.1s, opacity 0.15s;
   -webkit-tap-highlight-color: transparent;
-  min-height: 48px;
+  min-height: 52px;
 }
 .btn:active { transform: scale(0.96); opacity: 0.85; }
 
@@ -93,10 +93,10 @@ html, body {
 .btn-outline { background: transparent; border: 1.5px solid var(--text-muted); color: var(--text-dim); }
 .btn-icon { background: transparent; color: var(--text-dim); font-size: 1.2rem; min-width: 44px; padding: 8px; }
 
-.btn-lg { font-size: 1.05rem; padding: 16px 28px; border-radius: var(--radius); min-height: 54px; }
-.btn-water { background: var(--water-dim); color: var(--water); font-size: 1rem; flex: 1; border: 1px solid rgba(0,212,255,0.2); }
-.btn-water-undo { background: var(--bg-card-alt); color: var(--text-muted); font-size: 0.85rem; min-width: 56px; }
-.btn-walk { background: var(--positive-dim); color: var(--positive); flex: 1; font-size: 0.9rem; border: 1px solid rgba(0,255,65,0.15); }
+.btn-lg { font-size: 1.25rem; padding: 18px 30px; border-radius: var(--radius); min-height: 58px; }
+.btn-water { background: var(--water-dim); color: var(--water); font-size: 1.15rem; flex: 1; border: 1px solid rgba(0,212,255,0.2); }
+.btn-water-undo { background: var(--bg-card-alt); color: var(--text-muted); font-size: 1rem; min-width: 56px; }
+.btn-walk { background: var(--positive-dim); color: var(--positive); flex: 1; font-size: 1.05rem; border: 1px solid rgba(0,255,65,0.15); }
 
 .btn-row { display: flex; gap: 8px; margin-top: 12px; }
 
@@ -107,7 +107,7 @@ html, body {
   border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
   padding: 10px 14px;
   margin-top: 12px;
-  font-size: 0.85rem;
+  font-size: 1rem;
   line-height: 1.5;
   color: var(--text-dim);
   animation: insightIn 0.3s ease;
@@ -140,13 +140,13 @@ html, body {
 
 /* Morning Modal */
 .morning-greeting {
-  font-size: 1.4rem;
+  font-size: 1.75rem;
   font-weight: 700;
   margin-bottom: 14px;
   color: var(--text);
 }
 .morning-quote {
-  font-size: 0.9rem;
+  font-size: 1.1rem;
   color: var(--text-dim);
   line-height: 1.6;
   margin-bottom: 22px;
@@ -154,7 +154,7 @@ html, body {
   padding: 0 4px;
 }
 .morning-sleep-label {
-  font-size: 0.85rem;
+  font-size: 1.05rem;
   color: var(--text-muted);
   margin-bottom: 8px;
 }
@@ -162,7 +162,7 @@ html, body {
 /* Star Rating */
 .star-rating { display: flex; gap: 6px; justify-content: center; margin-bottom: 18px; }
 .star {
-  font-size: 1.8rem;
+  font-size: 2.2rem;
   background: none;
   border: none;
   color: var(--text-muted);
@@ -173,7 +173,7 @@ html, body {
 }
 .star.active { color: var(--accent); }
 .star:active { transform: scale(1.15); }
-.star-rating-large .star { font-size: 2.4rem; }
+.star-rating-large .star { font-size: 3rem; }
 
 /* Craving Modal */
 .craving-modal-content { background: var(--bg); }
@@ -600,7 +600,7 @@ html, body {
   margin-top: 2px;
 }
 .feeding-check { text-align: center; margin-top: 14px; padding-top: 14px; border-top: 1px solid var(--bg-card-alt); }
-.feeding-check p { margin-bottom: 10px; font-weight: 600; font-size: 0.9rem; }
+.feeding-check p { margin-bottom: 10px; font-weight: 600; font-size: 1.1rem; }
 .feeding-insight { margin-top: 0; }
 
 /* Water — horizontal bar instead of ring */
@@ -621,7 +621,7 @@ html, body {
   border-radius: 5px;
   transition: width 0.4s ease;
 }
-.water-pct { font-size: 0.75rem; color: var(--text-muted); text-align: right; }
+.water-pct { font-size: 0.9rem; color: var(--text-muted); text-align: right; }
 
 /* Weight */
 .weight-input-row { display: flex; gap: 8px; margin-bottom: 14px; }
@@ -702,7 +702,7 @@ html, body {
   transition: width 0.5s ease;
   min-width: 0;
 }
-.walking-pct { font-size: 0.75rem; color: var(--text-muted); text-align: right; }
+.walking-pct { font-size: 0.9rem; color: var(--text-muted); text-align: right; }
 /* Walking buttons — wrap to 2x2 on small screens */
 .walk-btn-grid {
   display: grid;
@@ -718,9 +718,9 @@ html, body {
 }
 .mc-question:last-child { border-bottom: none; }
 .mc-q-text {
-  font-size: 0.9rem;
+  font-size: 1.1rem;
   font-weight: 500;
-  margin-bottom: 8px;
+  margin-bottom: 10px;
   color: var(--text);
 }
 .mc-btn-row { gap: 8px; }
@@ -733,17 +733,17 @@ html, body {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 2px;
-  padding: 8px 10px;
+  gap: 3px;
+  padding: 10px 12px;
   border-radius: var(--radius-sm);
   background: var(--bg-card-alt);
   border: 2px solid transparent;
   cursor: pointer;
-  font-size: 1.3rem;
+  font-size: 1.6rem;
   transition: border-color 0.15s, background 0.15s;
 }
 .mc-emoji span {
-  font-size: 0.6rem;
+  font-size: 0.72rem;
   color: var(--text-muted);
   text-transform: uppercase;
   letter-spacing: 0.03em;
@@ -789,7 +789,7 @@ html, body {
 .mc-done-check {
   color: var(--positive);
   font-weight: 700;
-  font-size: 1rem;
+  font-size: 1.2rem;
   margin-bottom: 6px;
 }
 .mc-summary {
@@ -797,7 +797,7 @@ html, body {
   gap: 12px;
   justify-content: center;
   flex-wrap: wrap;
-  font-size: 0.8rem;
+  font-size: 1rem;
   color: var(--text-muted);
   margin-bottom: 8px;
 }
@@ -808,12 +808,12 @@ html, body {
   margin-top: 6px;
 }
 .streak-number-sm {
-  font-size: 1.5rem;
+  font-size: 1.8rem;
   font-weight: 800;
   color: var(--accent);
 }
 .streak-label-sm {
-  font-size: 0.8rem;
+  font-size: 1rem;
   color: var(--text-muted);
 }
 .btn-outline-dim {
@@ -836,7 +836,7 @@ html, body {
 
 /* ===== WALKING DISTANCE ===== */
 .walking-distance {
-  font-size: 0.8rem;
+  font-size: 0.95rem;
   color: var(--text-muted);
   text-align: center;
   margin-top: 4px;
@@ -850,9 +850,9 @@ html, body {
   justify-content: space-between;
   margin-bottom: 14px;
 }
-.calendar-nav span { font-size: 1rem; font-weight: 700; }
+.calendar-nav span { font-size: 1.25rem; font-weight: 700; }
 .cal-today-btn {
-  font-size: 0.7rem;
+  font-size: 0.88rem;
   font-weight: 600;
   color: var(--accent);
   background: none;
@@ -902,16 +902,18 @@ html, body {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  font-size: 0.8rem;
+  font-size: 0.95rem;
   font-weight: 600;
   cursor: pointer;
-  transition: transform 0.1s;
+  transition: transform 0.1s, background 0.15s;
   background: var(--bg-card);
   -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
 }
 .cal-day:active { transform: scale(0.92); }
-.cal-day.empty { background: transparent; cursor: default; }
+.cal-day.empty { background: transparent; cursor: default; pointer-events: none; }
 .cal-day.today { border: 2px solid var(--accent); }
+.cal-day.cal-selected { background: var(--accent-dim); border: 2px solid var(--accent); }
 .cal-day .cal-dots { display: flex; gap: 2px; margin-top: 2px; }
 .cal-day .cal-dot-sm { width: 4px; height: 4px; border-radius: 1px; }
 
@@ -929,8 +931,8 @@ html, body {
   padding: 14px;
   margin-top: 12px;
 }
-.calendar-detail h3 { font-size: 0.95rem; margin-bottom: 8px; }
-.detail-row { display: flex; justify-content: space-between; padding: 7px 0; border-bottom: 1px solid var(--bg-card-alt); font-size: 0.85rem; }
+.calendar-detail h3 { font-size: 1.15rem; margin-bottom: 10px; }
+.detail-row { display: flex; justify-content: space-between; padding: 9px 0; border-bottom: 1px solid var(--bg-card-alt); font-size: 1.05rem; }
 .detail-row:last-child { border-bottom: none; }
 
 /* ===== SETTINGS ===== */
@@ -940,17 +942,17 @@ html, body {
   padding: 18px;
   margin-bottom: 12px;
 }
-.settings-group h2 { font-size: 0.95rem; font-weight: 700; margin-bottom: 12px; }
+.settings-group h2 { font-size: 1.15rem; font-weight: 700; margin-bottom: 12px; }
 .settings-field { margin-bottom: 12px; }
-.settings-field label { display: block; font-size: 0.75rem; color: var(--text-muted); margin-bottom: 4px; font-weight: 500; }
+.settings-field label { display: block; font-size: 0.9rem; color: var(--text-muted); margin-bottom: 4px; font-weight: 500; }
 .settings-field input {
   width: 100%;
   background: var(--bg-input);
   border: 1.5px solid var(--bg-card-alt);
   border-radius: var(--radius-sm);
   color: var(--text);
-  font-size: 0.95rem;
-  padding: 11px 12px;
+  font-size: 1.1rem;
+  padding: 13px 14px;
   outline: none;
   transition: border-color 0.2s;
 }
@@ -1249,7 +1251,7 @@ html, body {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  pointer-events: none;
+  pointer-events: none; /* children override this */
 }
 .dial-value {
   font-size: clamp(3.2rem, 12vw, 4.8rem);
@@ -1260,9 +1262,29 @@ html, body {
   letter-spacing: 0.02em;
   line-height: 1;
   color: #fff;
+  pointer-events: auto;
+  cursor: pointer;
+  -webkit-tap-highlight-color: rgba(255, 215, 0, 0.2);
+  touch-action: manipulation;
+}
+.dial-value.editing {
+  border-bottom: none;
+}
+.dial-value .dial-edit-input {
+  width: 5ch !important;
+  font-size: inherit;
+  font-family: inherit;
+  font-weight: inherit;
+}
+.dial-edit-hint {
+  font-size: 0.7rem;
+  color: var(--text-muted);
+  letter-spacing: 0.05em;
+  margin-top: 2px;
+  opacity: 0.6;
 }
 .dial-unit {
-  font-size: 0.75rem;
+  font-size: 0.95rem;
   font-weight: 900;
   letter-spacing: 0.25em;
   color: var(--accent);
@@ -1280,12 +1302,12 @@ html, body {
   color: var(--text);
   font-family: 'SF Mono', monospace;
   font-weight: 700;
-  font-size: 0.85rem;
-  padding: 10px 20px;
+  font-size: 1.05rem;
+  padding: 12px 24px;
   border-radius: var(--radius-sm);
   cursor: pointer;
-  min-height: 44px;
-  min-width: 80px;
+  min-height: 48px;
+  min-width: 90px;
 }
 .btn-dial-adj:active { transform: scale(0.95); background: var(--accent-dim); }
 .btn-lock {
@@ -1484,7 +1506,7 @@ html, body {
   100% { transform: scale(1) rotate(0deg); opacity: 1; }
 }
 .mc-done-check {
-  font-size: 1.4rem !important;
+  font-size: 1.75rem !important;
   font-weight: 900 !important;
   letter-spacing: 0.1em;
   text-transform: uppercase;
@@ -1570,8 +1592,8 @@ html, body {
 
 /* ===== LOCK BUTTON — championship belt feel ===== */
 .btn-lock {
-  font-size: 1.2rem;
-  padding: 18px;
+  font-size: 1.4rem;
+  padding: 20px;
   border: 2px solid rgba(255, 215, 0, 0.3);
   text-shadow: 0 1px 0 rgba(0,0,0,0.3);
   background: linear-gradient(180deg, #ffd700, #e6c200);
