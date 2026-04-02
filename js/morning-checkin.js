@@ -1,7 +1,7 @@
 // morning-checkin.js — Morning goal-setting exercise
 // Each answer auto-saves immediately on click. No save button needed.
 
-import { getActiveDay, saveActiveDay, getDay, saveDay, yesterdayStr, getCarbStreak, getRecentDays } from './store.js';
+import { getActiveDay, saveActiveDay, getDay, saveDay, yesterdayStr, getCarbStreak, getAfter6Streak, getRecentDays } from './store.js';
 import { getCarbInsight } from './insights.js';
 import { showInlineInsight } from './app.js';
 
@@ -9,9 +9,11 @@ export function initMorningCheckin() {
   const today = getActiveDay();
   const streak = getCarbStreak();
 
-  // Update streak display
+  // Update streak displays
   const streakEl = document.getElementById('mc-streak');
   if (streakEl) streakEl.textContent = streak;
+  const after6StreakEl = document.getElementById('mc-after6-streak');
+  if (after6StreakEl) after6StreakEl.textContent = getAfter6Streak();
 
   // Update carb dots
   const dotsEl = document.getElementById('mc-carb-dots');
@@ -116,6 +118,12 @@ function saveAnswer(key, value) {
   }
   today.morningCheckin[key] = value;
   saveActiveDay(today);
+
+  // Update after-6 streak when that answer changes
+  if (key === 'ateAfterSixPm') {
+    const after6StreakEl = document.getElementById('mc-after6-streak');
+    if (after6StreakEl) after6StreakEl.textContent = getAfter6Streak();
+  }
 
   // Special: low-carb answer also saves to yesterday
   if (key === 'lowCarbYesterday') {

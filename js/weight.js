@@ -22,9 +22,9 @@ const bmiZonePlugin = {
     const yScale = scales.y;
 
     const zones = [
-      { min: 0, max: normalMax, color: 'rgba(124, 184, 122, 0.07)', label: 'Normal' },
-      { min: normalMax, max: overMax, color: 'rgba(212, 160, 87, 0.07)', label: 'Overweight' },
-      { min: overMax, max: 9999, color: 'rgba(201, 100, 90, 0.07)', label: 'Obese' }
+      { min: 0, max: normalMax, color: 'rgba(52, 211, 153, 0.08)', label: 'Normal' },
+      { min: normalMax, max: overMax, color: 'rgba(245, 158, 11, 0.08)', label: 'Overweight' },
+      { min: overMax, max: 9999, color: 'rgba(244, 114, 182, 0.08)', label: 'Obese' }
     ];
 
     ctx.save();
@@ -138,7 +138,7 @@ function renderWeightStats() {
 
   // BMI
   const heightIn = profile.heightInches || 75;
-  const bmi = (dayData.weight * 703) / (heightIn * heightIn);
+  const bmi = (today.weight * 703) / (heightIn * heightIn);
   const bmiCls = bmi >= 30 ? 'negative' : bmi >= 25 ? 'text-accent' : 'positive';
   html += `<div class="weight-stat">
     <div class="weight-stat-value ${bmiCls}">${bmi.toFixed(1)}</div>
@@ -191,18 +191,18 @@ function renderWeightChart() {
         {
           label: 'Weight',
           data,
-          borderColor: '#9b9890',
+          borderColor: '#8b95a8',
           backgroundColor: 'transparent',
           borderWidth: 1.5,
           pointRadius: 2.5,
-          pointBackgroundColor: '#e8e6e1',
+          pointBackgroundColor: '#f1f3f8',
           tension: 0.1,
           fill: false
         },
         {
           label: 'Trend',
           data: sma,
-          borderColor: '#d4a057',
+          borderColor: '#f59e0b',
           borderWidth: 2,
           borderDash: [4, 4],
           pointRadius: 0,
@@ -212,7 +212,7 @@ function renderWeightChart() {
         {
           label: 'Goal',
           data: new Array(data.length).fill(profile.goalWeight),
-          borderColor: 'rgba(124, 184, 122, 0.4)',
+          borderColor: 'rgba(52, 211, 153, 0.4)',
           borderWidth: 1,
           borderDash: [8, 4],
           pointRadius: 0,
@@ -232,13 +232,13 @@ function renderWeightChart() {
       plugins: {
         legend: {
           display: true,
-          labels: { color: '#5e5d58', font: { size: 9 }, boxWidth: 10, padding: 6 }
+          labels: { color: '#4e5769', font: { size: 9 }, boxWidth: 10, padding: 6 }
         },
         tooltip: {
-          backgroundColor: '#1c1c1a',
-          titleColor: '#e8e6e1',
-          bodyColor: '#9b9890',
-          borderColor: '#252523',
+          backgroundColor: '#141820',
+          titleColor: '#f1f3f8',
+          bodyColor: '#8b95a8',
+          borderColor: '#1c2230',
           borderWidth: 1,
           callbacks: {
             label: (ctx) => `${ctx.dataset.label}: ${ctx.parsed.y.toFixed(1)} lbs`
@@ -247,12 +247,12 @@ function renderWeightChart() {
       },
       scales: {
         x: {
-          ticks: { color: '#5e5d58', font: { size: 9 }, maxRotation: 45, autoSkip: true, maxTicksLimit: Math.ceil(labels.length / 2) },
-          grid: { color: 'rgba(94, 93, 88, 0.1)' }
+          ticks: { color: '#4e5769', font: { size: 9 }, maxRotation: 45, autoSkip: true, maxTicksLimit: Math.ceil(labels.length / 2) },
+          grid: { color: 'rgba(78, 87, 105, 0.15)' }
         },
         y: {
-          ticks: { color: '#5e5d58', font: { size: 9 } },
-          grid: { color: 'rgba(94, 93, 88, 0.1)' },
+          ticks: { color: '#4e5769', font: { size: 9 } },
+          grid: { color: 'rgba(78, 87, 105, 0.15)' },
           min: minWeight - padding,
           max: maxWeight + padding
         }

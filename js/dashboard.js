@@ -284,7 +284,7 @@ function fireMilestoneParticles() {
   canvas.height = window.innerHeight;
   const ctx = canvas.getContext('2d');
 
-  const colors = ['#d4a057', '#e8b76a', '#7cb87a', '#6b9fc4', '#c9645a', '#e8e6e1'];
+  const colors = ['#f59e0b', '#fbbf24', '#34d399', '#38bdf8', '#f472b6', '#f1f3f8'];
   const particles = [];
 
   for (let i = 0; i < 40; i++) {

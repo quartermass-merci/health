@@ -137,6 +137,24 @@ export function getLastWeight() {
   return weights.length > 0 ? weights[weights.length - 1] : null;
 }
 
+export function getAfter6Streak() {
+  const index = getDayIndex();
+  let streak = 0;
+  for (let i = index.length - 1; i >= 0; i--) {
+    const day = getDay(index[i]);
+    const checkin = day.morningCheckin;
+    if (checkin && checkin.ateAfterSixPm === false) {
+      streak++;
+    } else if (checkin && checkin.ateAfterSixPm === true) {
+      break;
+    } else {
+      if (index[i] === todayStr()) continue;
+      break;
+    }
+  }
+  return streak;
+}
+
 export function getCarbStreak() {
   const index = getDayIndex();
   let streak = 0;

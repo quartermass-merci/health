@@ -2,29 +2,29 @@
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
 :root {
-  /* Warm-tinted neutrals — never pure gray */
-  --bg: #12110f;
-  --bg-card: #1d1b18;
-  --bg-card-alt: #26241f;
-  --bg-input: #2e2b26;
-  --text: #ede9e0;
-  --text-dim: #a09889;
-  --text-muted: #635c50;
-  /* Earthy accent — one accent color, used sparingly */
-  --accent: #d4a057;
-  --accent-dim: rgba(212, 160, 87, 0.10);
-  --accent-strong: #e8b76a;
-  /* Semantic colors — muted, not neon */
-  --positive: #7cb87a;
-  --positive-dim: rgba(124, 184, 122, 0.10);
-  --negative: #c9645a;
-  --negative-dim: rgba(201, 100, 90, 0.10);
-  --water: #6b9fc4;
-  --water-dim: rgba(107, 159, 196, 0.10);
-  /* Phase colors */
-  --phase1: #c9645a;
-  --phase2: #d4a057;
-  --phase3: #7cb87a;
+  /* Deep cool dark — makes colors pop */
+  --bg: #0b0e14;
+  --bg-card: #141820;
+  --bg-card-alt: #1c2230;
+  --bg-input: #1e2436;
+  --text: #f1f3f8;
+  --text-dim: #8b95a8;
+  --text-muted: #4e5769;
+  /* Electric amber accent */
+  --accent: #f59e0b;
+  --accent-dim: rgba(245, 158, 11, 0.12);
+  --accent-strong: #fbbf24;
+  /* Vivid semantic colors */
+  --positive: #34d399;
+  --positive-dim: rgba(52, 211, 153, 0.12);
+  --negative: #f472b6;
+  --negative-dim: rgba(244, 114, 182, 0.12);
+  --water: #38bdf8;
+  --water-dim: rgba(56, 189, 248, 0.12);
+  /* Phase colors — vivid */
+  --phase1: #fb7185;
+  --phase2: #f59e0b;
+  --phase3: #34d399;
 
   /* Fluid type scale */
   --text-xs: clamp(0.65rem, 0.6rem + 0.25vw, 0.72rem);
@@ -92,9 +92,9 @@ html, body {
 .btn-icon { background: transparent; color: var(--text-dim); font-size: 1.2rem; min-width: 44px; padding: 8px; }
 
 .btn-lg { font-size: 1.05rem; padding: 16px 28px; border-radius: var(--radius); min-height: 54px; }
-.btn-water { background: var(--water-dim); color: var(--water); font-size: 1rem; flex: 1; border: 1px solid rgba(107,159,196,0.2); }
+.btn-water { background: var(--water-dim); color: var(--water); font-size: 1rem; flex: 1; border: 1px solid rgba(56,189,248,0.2); }
 .btn-water-undo { background: var(--bg-card-alt); color: var(--text-muted); font-size: 0.85rem; min-width: 56px; }
-.btn-walk { background: var(--positive-dim); color: var(--positive); flex: 1; font-size: 0.9rem; border: 1px solid rgba(124,184,122,0.15); }
+.btn-walk { background: var(--positive-dim); color: var(--positive); flex: 1; font-size: 0.9rem; border: 1px solid rgba(52,211,153,0.15); }
 
 .btn-row { display: flex; gap: 8px; margin-top: 12px; }
 
@@ -748,16 +748,23 @@ html, body {
 }
 /* Selected state — dramatic visual lock-in */
 .mc-selected {
-  box-shadow: 0 0 0 3px var(--accent) !important;
-  transform: scale(1.02);
-  transition: all 0.15s ease;
+  box-shadow: 0 0 0 3px var(--accent), 0 0 16px rgba(245, 158, 11, 0.25) !important;
+  transform: scale(1.05);
+  transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+.btn-success.mc-selected {
+  box-shadow: 0 0 0 3px var(--positive), 0 0 16px rgba(52, 211, 153, 0.3) !important;
+}
+.btn-danger.mc-selected {
+  box-shadow: 0 0 0 3px var(--negative), 0 0 16px rgba(244, 114, 182, 0.3) !important;
 }
 /* Dim the unselected sibling when one is picked */
 .mc-answered .btn:not(.mc-selected),
 .mc-answered .mc-emoji:not(.mc-selected) {
-  opacity: 0.25 !important;
-  transform: scale(0.95);
-  transition: all 0.15s ease;
+  opacity: 0.15 !important;
+  transform: scale(0.9);
+  transition: all 0.25s ease;
+  pointer-events: none;
 }
 .mc-emoji.mc-selected {
   border-color: var(--accent);
@@ -765,7 +772,8 @@ html, body {
 }
 #mc-commit.mc-selected {
   background: var(--positive) !important;
-  box-shadow: 0 0 0 3px var(--positive) !important;
+  box-shadow: 0 0 0 3px var(--positive), 0 0 20px rgba(52, 211, 153, 0.35) !important;
+  color: #0b0e14 !important;
 }
 .mc-commitment { text-align: center; padding-top: 16px; }
 .mc-commit-btn { width: 100%; }
@@ -809,7 +817,7 @@ html, body {
 }
 .btn-outline-dim {
   background: var(--bg-card-alt);
-  border: 1px solid var(--border);
+  border: 1px solid var(--bg-card-alt);
   color: var(--text-dim);
   padding: 10px 20px;
   border-radius: var(--radius-sm);
@@ -822,7 +830,7 @@ html, body {
 .mc-question .mc-emoji,
 .mc-commit-btn {
   touch-action: manipulation;
-  -webkit-tap-highlight-color: rgba(212, 160, 87, 0.2);
+  -webkit-tap-highlight-color: rgba(245, 158, 11, 0.2);
 }
 
 /* ===== WALKING DISTANCE ===== */
@@ -960,7 +968,7 @@ html, body {
 /* ===== MILESTONE CELEBRATION ===== */
 .milestone-banner {
   background: var(--accent-dim);
-  border: 1px solid rgba(212, 160, 87, 0.25);
+  border: 1px solid rgba(245, 158, 11, 0.25);
   border-radius: var(--radius);
   padding: 14px 16px;
   margin-bottom: 12px;
@@ -982,7 +990,7 @@ html, body {
 /* ===== DATE BANNER (past-day editing) ===== */
 .date-banner {
   background: var(--accent-dim);
-  border: 1px solid rgba(212, 160, 87, 0.2);
+  border: 1px solid rgba(245, 158, 11, 0.2);
   border-radius: var(--radius);
   padding: 10px 14px;
   margin-bottom: var(--space-md);
@@ -1086,8 +1094,8 @@ html, body {
 
 /* FAB idle pulse */
 @keyframes fabPulse {
-  0%, 100% { box-shadow: 0 0 0 0 rgba(201, 100, 90, 0.3); }
-  50% { box-shadow: 0 0 0 8px rgba(201, 100, 90, 0); }
+  0%, 100% { box-shadow: 0 0 0 0 rgba(244, 114, 182, 0.3); }
+  50% { box-shadow: 0 0 0 8px rgba(244, 114, 182, 0); }
 }
 .craving-fab {
   animation: fabPulse 3s ease-in-out infinite;
@@ -1150,10 +1158,10 @@ html, body {
   pointer-events: none;
   transition: background 2s ease;
 }
-.dash-hero.tod-morning::before { background: linear-gradient(135deg, #d4a057, #e8b76a); }
-.dash-hero.tod-afternoon::before { background: linear-gradient(135deg, #7cb87a, #6b9fc4); }
-.dash-hero.tod-evening::before { background: linear-gradient(135deg, #c9645a, #d4a057); }
-.dash-hero.tod-night::before { background: linear-gradient(135deg, #3a3a50, #252540); }
+.dash-hero.tod-morning::before { background: linear-gradient(135deg, #f59e0b, #fbbf24); }
+.dash-hero.tod-afternoon::before { background: linear-gradient(135deg, #34d399, #38bdf8); }
+.dash-hero.tod-evening::before { background: linear-gradient(135deg, #f472b6, #f59e0b); }
+.dash-hero.tod-night::before { background: linear-gradient(135deg, #1c2230, #141820); }
 
 /* Milestone particles canvas */
 .particles-canvas {
@@ -1181,7 +1189,7 @@ html, body {
   left: 0;
   width: 40%;
   height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(212,160,87,0.15), transparent);
+  background: linear-gradient(90deg, transparent, rgba(245,158,11,0.2), transparent);
   animation: milestoneShine 2s ease-in-out 0.5s;
   pointer-events: none;
 }
