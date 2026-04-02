@@ -2,29 +2,31 @@
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
 :root {
-  /* Deep cool dark — makes colors pop */
-  --bg: #0b0e14;
-  --bg-card: #141820;
-  --bg-card-alt: #1c2230;
-  --bg-input: #1e2436;
-  --text: #f1f3f8;
-  --text-dim: #8b95a8;
-  --text-muted: #4e5769;
-  /* Electric amber accent */
-  --accent: #f59e0b;
-  --accent-dim: rgba(245, 158, 11, 0.12);
-  --accent-strong: #fbbf24;
-  /* Vivid semantic colors */
-  --positive: #34d399;
-  --positive-dim: rgba(52, 211, 153, 0.12);
-  --negative: #f472b6;
-  --negative-dim: rgba(244, 114, 182, 0.12);
-  --water: #38bdf8;
-  --water-dim: rgba(56, 189, 248, 0.12);
-  /* Phase colors — vivid */
-  --phase1: #fb7185;
-  --phase2: #f59e0b;
-  --phase3: #34d399;
+  /* PUNCH-OUT!! Arena black */
+  --bg: #000;
+  --bg-card: #0a0a18;
+  --bg-card-alt: #12122a;
+  --bg-input: #16163a;
+  --text: #fff;
+  --text-dim: #9999cc;
+  --text-muted: #555577;
+  /* Championship gold */
+  --accent: #ffd700;
+  --accent-dim: rgba(255, 215, 0, 0.12);
+  --accent-strong: #ffe44d;
+  /* Arcade colors */
+  --positive: #00ff41;
+  --positive-dim: rgba(0, 255, 65, 0.10);
+  --negative: #ff1a5e;
+  --negative-dim: rgba(255, 26, 94, 0.10);
+  --water: #00d4ff;
+  --water-dim: rgba(0, 212, 255, 0.10);
+  --fire: #ff6600;
+  --fire-hot: #ff3300;
+  /* Phase colors */
+  --phase1: #ff1a5e;
+  --phase2: #ffd700;
+  --phase3: #00ff41;
 
   /* Fluid type scale */
   --text-xs: clamp(0.65rem, 0.6rem + 0.25vw, 0.72rem);
@@ -92,9 +94,9 @@ html, body {
 .btn-icon { background: transparent; color: var(--text-dim); font-size: 1.2rem; min-width: 44px; padding: 8px; }
 
 .btn-lg { font-size: 1.05rem; padding: 16px 28px; border-radius: var(--radius); min-height: 54px; }
-.btn-water { background: var(--water-dim); color: var(--water); font-size: 1rem; flex: 1; border: 1px solid rgba(56,189,248,0.2); }
+.btn-water { background: var(--water-dim); color: var(--water); font-size: 1rem; flex: 1; border: 1px solid rgba(0,212,255,0.2); }
 .btn-water-undo { background: var(--bg-card-alt); color: var(--text-muted); font-size: 0.85rem; min-width: 56px; }
-.btn-walk { background: var(--positive-dim); color: var(--positive); flex: 1; font-size: 0.9rem; border: 1px solid rgba(52,211,153,0.15); }
+.btn-walk { background: var(--positive-dim); color: var(--positive); flex: 1; font-size: 0.9rem; border: 1px solid rgba(0,255,65,0.15); }
 
 .btn-row { display: flex; gap: 8px; margin-top: 12px; }
 
@@ -554,9 +556,9 @@ html, body {
 .track-card:nth-child(odd) { margin-bottom: var(--space-lg); }
 .track-title {
   font-size: var(--text-xs);
-  color: var(--text-muted);
-  font-weight: 700;
-  letter-spacing: 0.06em;
+  color: var(--accent);
+  font-weight: 900;
+  letter-spacing: 0.12em;
   text-transform: uppercase;
   margin-bottom: var(--space-md);
 }
@@ -748,23 +750,22 @@ html, body {
 }
 /* Selected state — dramatic visual lock-in */
 .mc-selected {
-  box-shadow: 0 0 0 3px var(--accent), 0 0 16px rgba(245, 158, 11, 0.25) !important;
+  box-shadow: 0 0 0 3px var(--accent), 0 0 20px rgba(255, 215, 0, 0.35) !important;
   transform: scale(1.05);
-  transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+  transition: all 0.15s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 .btn-success.mc-selected {
-  box-shadow: 0 0 0 3px var(--positive), 0 0 16px rgba(52, 211, 153, 0.3) !important;
+  box-shadow: 0 0 0 3px var(--positive), 0 0 20px rgba(0, 255, 65, 0.35) !important;
 }
 .btn-danger.mc-selected {
-  box-shadow: 0 0 0 3px var(--negative), 0 0 16px rgba(244, 114, 182, 0.3) !important;
+  box-shadow: 0 0 0 3px var(--negative), 0 0 20px rgba(255, 26, 94, 0.35) !important;
 }
-/* Dim the unselected sibling when one is picked */
+/* Dim the unselected sibling when one is picked — still tappable for undo */
 .mc-answered .btn:not(.mc-selected),
 .mc-answered .mc-emoji:not(.mc-selected) {
-  opacity: 0.15 !important;
+  opacity: 0.2 !important;
   transform: scale(0.9);
   transition: all 0.25s ease;
-  pointer-events: none;
 }
 .mc-emoji.mc-selected {
   border-color: var(--accent);
@@ -772,8 +773,8 @@ html, body {
 }
 #mc-commit.mc-selected {
   background: var(--positive) !important;
-  box-shadow: 0 0 0 3px var(--positive), 0 0 20px rgba(52, 211, 153, 0.35) !important;
-  color: #0b0e14 !important;
+  box-shadow: 0 0 0 3px var(--positive), 0 0 24px rgba(0, 255, 65, 0.4) !important;
+  color: #000 !important;
 }
 .mc-commitment { text-align: center; padding-top: 16px; }
 .mc-commit-btn { width: 100%; }
@@ -830,7 +831,7 @@ html, body {
 .mc-question .mc-emoji,
 .mc-commit-btn {
   touch-action: manipulation;
-  -webkit-tap-highlight-color: rgba(245, 158, 11, 0.2);
+  -webkit-tap-highlight-color: rgba(255, 215, 0, 0.2);
 }
 
 /* ===== WALKING DISTANCE ===== */
@@ -968,7 +969,7 @@ html, body {
 /* ===== MILESTONE CELEBRATION ===== */
 .milestone-banner {
   background: var(--accent-dim);
-  border: 1px solid rgba(245, 158, 11, 0.25);
+  border: 1px solid rgba(255, 215, 0, 0.25);
   border-radius: var(--radius);
   padding: 14px 16px;
   margin-bottom: 12px;
@@ -990,7 +991,7 @@ html, body {
 /* ===== DATE BANNER (past-day editing) ===== */
 .date-banner {
   background: var(--accent-dim);
-  border: 1px solid rgba(245, 158, 11, 0.2);
+  border: 1px solid rgba(255, 215, 0, 0.2);
   border-radius: var(--radius);
   padding: 10px 14px;
   margin-bottom: var(--space-md);
@@ -1094,8 +1095,8 @@ html, body {
 
 /* FAB idle pulse */
 @keyframes fabPulse {
-  0%, 100% { box-shadow: 0 0 0 0 rgba(244, 114, 182, 0.3); }
-  50% { box-shadow: 0 0 0 8px rgba(244, 114, 182, 0); }
+  0%, 100% { box-shadow: 0 0 0 0 rgba(255, 26, 94, 0.4); }
+  50% { box-shadow: 0 0 0 10px rgba(255, 26, 94, 0); }
 }
 .craving-fab {
   animation: fabPulse 3s ease-in-out infinite;
@@ -1158,10 +1159,10 @@ html, body {
   pointer-events: none;
   transition: background 2s ease;
 }
-.dash-hero.tod-morning::before { background: linear-gradient(135deg, #f59e0b, #fbbf24); }
-.dash-hero.tod-afternoon::before { background: linear-gradient(135deg, #34d399, #38bdf8); }
-.dash-hero.tod-evening::before { background: linear-gradient(135deg, #f472b6, #f59e0b); }
-.dash-hero.tod-night::before { background: linear-gradient(135deg, #1c2230, #141820); }
+.dash-hero.tod-morning::before { background: linear-gradient(135deg, #ffd700, #ffe44d); }
+.dash-hero.tod-afternoon::before { background: linear-gradient(135deg, #00ff41, #00d4ff); }
+.dash-hero.tod-evening::before { background: linear-gradient(135deg, #ff1a5e, #ff6600); }
+.dash-hero.tod-night::before { background: linear-gradient(135deg, #12122a, #0a0a18); }
 
 /* Milestone particles canvas */
 .particles-canvas {
@@ -1189,7 +1190,7 @@ html, body {
   left: 0;
   width: 40%;
   height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(245,158,11,0.2), transparent);
+  background: linear-gradient(90deg, transparent, rgba(255,215,0,0.25), transparent);
   animation: milestoneShine 2s ease-in-out 0.5s;
   pointer-events: none;
 }
@@ -1204,6 +1205,447 @@ html, body {
   animation: fadeIn 0.8s ease 0.2s both;
 }
 
+/* ===== WEIGHT DIAL ===== */
+.dial-container {
+  position: relative;
+  width: min(80vw, 300px);
+  height: min(80vw, 300px);
+  margin: 8px auto 12px;
+  touch-action: none;
+}
+.dial-svg {
+  width: 100%;
+  height: 100%;
+}
+.dial-track {
+  fill: none;
+  stroke: var(--bg-card-alt);
+  stroke-width: 18;
+  stroke-dasharray: 471.24 157.08;
+  stroke-linecap: round;
+  transform: rotate(135deg);
+  transform-origin: center;
+}
+.dial-arc {
+  fill: none;
+  stroke: var(--accent);
+  stroke-width: 18;
+  stroke-dasharray: 0 9999;
+  stroke-linecap: round;
+  transform: rotate(135deg);
+  transform-origin: center;
+  transition: stroke 0.3s ease;
+  filter: drop-shadow(0 0 6px currentColor);
+}
+.dial-knob {
+  fill: #fff;
+  filter: drop-shadow(0 0 8px rgba(255,255,255,0.5));
+  transition: cx 0.05s, cy 0.05s;
+}
+.dial-display {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+}
+.dial-value {
+  font-size: clamp(3.2rem, 12vw, 4.8rem);
+  font-weight: 900;
+  font-family: 'Impact', 'Arial Narrow', 'Helvetica Neue', sans-serif;
+  font-stretch: condensed;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.02em;
+  line-height: 1;
+  color: #fff;
+}
+.dial-unit {
+  font-size: 0.75rem;
+  font-weight: 900;
+  letter-spacing: 0.25em;
+  color: var(--accent);
+  margin-top: 6px;
+}
+.dial-adjust {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+  margin-bottom: 12px;
+}
+.btn-dial-adj {
+  background: var(--bg-card-alt);
+  border: 1px solid var(--text-muted);
+  color: var(--text);
+  font-family: 'SF Mono', monospace;
+  font-weight: 700;
+  font-size: 0.85rem;
+  padding: 10px 20px;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  min-height: 44px;
+  min-width: 80px;
+}
+.btn-dial-adj:active { transform: scale(0.95); background: var(--accent-dim); }
+.btn-lock {
+  display: block;
+  width: 100%;
+  background: var(--accent);
+  color: #000;
+  font-weight: 900;
+  font-size: 1.1rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 16px;
+  border: none;
+  border-radius: var(--radius);
+  cursor: pointer;
+  margin-bottom: 14px;
+  min-height: 54px;
+  transition: all 0.15s;
+}
+.btn-lock:active { transform: scale(0.97); }
+.btn-lock.locked {
+  background: var(--positive) !important;
+  box-shadow: 0 0 24px rgba(0, 255, 65, 0.4);
+}
+
+/* ===== NBA JAM CELEBRATION ===== */
+.jam-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 2000;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.92);
+  animation: jamIn 0.2s ease;
+}
+@keyframes jamIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+.jam-flames {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+.jam-flames .flame {
+  position: absolute;
+  bottom: -20%;
+  width: 40%;
+  height: 80%;
+  border-radius: 50% 50% 0 0;
+  opacity: 0.6;
+  animation: flameRise 1.2s ease-in-out infinite alternate;
+}
+.jam-flames .flame:nth-child(1) {
+  left: 5%;
+  background: linear-gradient(0deg, #ff3300, #ff6600 40%, #ffd700 70%, transparent);
+  animation-delay: 0s;
+}
+.jam-flames .flame:nth-child(2) {
+  left: 30%;
+  background: linear-gradient(0deg, #ff1a00, #ff4400 40%, #ffaa00 70%, transparent);
+  animation-delay: 0.3s;
+  width: 45%;
+}
+.jam-flames .flame:nth-child(3) {
+  right: 5%;
+  background: linear-gradient(0deg, #ff3300, #ff6600 40%, #ffd700 70%, transparent);
+  animation-delay: 0.15s;
+}
+@keyframes flameRise {
+  0% { transform: scaleY(0.8) translateY(10%); opacity: 0.5; }
+  100% { transform: scaleY(1.1) translateY(-5%); opacity: 0.7; }
+}
+.jam-quote {
+  position: relative;
+  z-index: 1;
+  font-size: clamp(2.2rem, 9vw, 4rem);
+  font-weight: 900;
+  color: #ffd700;
+  text-transform: uppercase;
+  text-align: center;
+  padding: 0 20px;
+  text-shadow: 0 0 30px #ff6600, 0 0 60px #ff3300, 0 2px 0 #000;
+  animation: jamPulse 0.4s ease infinite alternate;
+  letter-spacing: -0.02em;
+}
+@keyframes jamPulse {
+  from { transform: scale(1); }
+  to { transform: scale(1.04); }
+}
+.jam-detail {
+  position: relative;
+  z-index: 1;
+  font-size: clamp(1.2rem, 5vw, 1.8rem);
+  font-weight: 700;
+  font-family: 'SF Mono', monospace;
+  color: #fff;
+  margin-top: 12px;
+  text-shadow: 0 0 20px rgba(255,255,255,0.5);
+}
+
+/* ===== PUNCH-OUT!! TYPOGRAPHY ===== */
+.app-title {
+  font-weight: 900 !important;
+  letter-spacing: 0.06em !important;
+  text-transform: uppercase !important;
+  font-size: var(--text-lg) !important;
+}
+.header-day-badge {
+  font-family: 'SF Mono', 'Menlo', monospace;
+  letter-spacing: 0.06em;
+  font-weight: 900;
+  border: 2px solid var(--accent);
+  background: transparent;
+  color: var(--accent);
+}
+.dash-hero-time, .dash-weight-lost, .dash-streak-num, .dash-compact-value {
+  font-family: 'SF Mono', 'Menlo', 'Courier New', monospace;
+}
+.streak-number, .streak-number-sm {
+  font-family: 'SF Mono', 'Menlo', 'Courier New', monospace;
+}
+
+/* ===== RING ROPES — horizontal scan lines on cards ===== */
+.track-card {
+  border: 1px solid rgba(255, 215, 0, 0.08);
+  position: relative;
+}
+.track-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent 0px,
+    transparent 3px,
+    rgba(255, 215, 0, 0.015) 3px,
+    rgba(255, 215, 0, 0.015) 4px
+  );
+}
+.dash-hero, .dash-compact, .dash-streak, .phase-strip {
+  border: 1px solid rgba(255, 215, 0, 0.08);
+}
+
+/* ===== TRACK TITLE — corner accent ===== */
+.track-title {
+  padding-left: 12px;
+  border-left: 3px solid var(--accent);
+  text-shadow: 0 0 20px rgba(255, 215, 0, 0.3);
+}
+
+/* ===== STREAK HEARTBEAT GLOW ===== */
+@keyframes streakGlow {
+  0%, 100% { text-shadow: 0 0 8px currentColor; }
+  50% { text-shadow: 0 0 24px currentColor, 0 0 48px currentColor; }
+}
+.dash-streak-num {
+  animation: streakGlow 2s ease-in-out infinite;
+}
+.streak-number-sm {
+  animation: streakGlow 2.5s ease-in-out infinite;
+}
+
+/* ===== PUNCH FLASH — on button select ===== */
+@keyframes punchFlash {
+  0% { box-shadow: inset 0 0 0 0 rgba(255,255,255,0.6); }
+  30% { box-shadow: inset 0 0 30px 10px rgba(255,255,255,0.4); }
+  100% { box-shadow: none; }
+}
+.mc-selected {
+  animation: punchFlash 0.3s ease-out;
+}
+
+/* ===== KO SLAM — weight loss number entry ===== */
+@keyframes koSlam {
+  0% { transform: scale(3) translateY(-30px); opacity: 0; }
+  40% { transform: scale(0.95) translateY(2px); opacity: 1; }
+  55% { transform: scale(1.08); }
+  70% { transform: scale(0.98); }
+  100% { transform: scale(1) translateY(0); opacity: 1; }
+}
+.ko-slam {
+  animation: koSlam 0.7s cubic-bezier(0.22, 0.61, 0.36, 1) both;
+}
+
+/* ===== TKO STAMP — done state ===== */
+@keyframes tkoStamp {
+  0% { transform: scale(4) rotate(-15deg); opacity: 0; }
+  50% { transform: scale(0.9) rotate(3deg); opacity: 1; }
+  70% { transform: scale(1.05) rotate(-1deg); }
+  100% { transform: scale(1) rotate(0deg); opacity: 1; }
+}
+.mc-done-check {
+  font-size: 1.4rem !important;
+  font-weight: 900 !important;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  text-shadow: 0 0 20px var(--positive);
+  animation: tkoStamp 0.5s cubic-bezier(0.22, 0.61, 0.36, 1) both;
+}
+
+/* ===== HIT FLASH on progress bar fills ===== */
+@keyframes hitFlash {
+  0% { filter: brightness(1); }
+  15% { filter: brightness(2.5); }
+  100% { filter: brightness(1); }
+}
+.water-bar-fill, .walking-progress-fill {
+  transition: width 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* ===== SCREEN SHAKE for celebrations ===== */
+@keyframes screenShake {
+  0%, 100% { transform: translate(0, 0); }
+  10% { transform: translate(-6px, 3px); }
+  20% { transform: translate(5px, -4px); }
+  30% { transform: translate(-4px, 5px); }
+  40% { transform: translate(6px, -2px); }
+  50% { transform: translate(-3px, -4px); }
+  60% { transform: translate(4px, 3px); }
+  70% { transform: translate(-5px, -2px); }
+  80% { transform: translate(3px, 4px); }
+  90% { transform: translate(-2px, -3px); }
+}
+.screen-shake {
+  animation: screenShake 0.5s ease-out;
+}
+
+/* ===== TRACK CARDS — boxing round entrance ===== */
+@keyframes roundCardLeft {
+  0% { opacity: 0; transform: translateX(-60px) rotate(-2deg); }
+  60% { opacity: 1; transform: translateX(6px) rotate(0.5deg); }
+  100% { opacity: 1; transform: translateX(0) rotate(0); }
+}
+@keyframes roundCardRight {
+  0% { opacity: 0; transform: translateX(60px) rotate(2deg); }
+  60% { opacity: 1; transform: translateX(-6px) rotate(-0.5deg); }
+  100% { opacity: 1; transform: translateX(0) rotate(0); }
+}
+.track-card:nth-child(odd) {
+  animation: roundCardLeft 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+.track-card:nth-child(even) {
+  animation: roundCardRight 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+.track-card:nth-child(1) { animation-delay: 0ms; }
+.track-card:nth-child(2) { animation-delay: 80ms; }
+.track-card:nth-child(3) { animation-delay: 160ms; }
+.track-card:nth-child(4) { animation-delay: 240ms; }
+.track-card:nth-child(5) { animation-delay: 320ms; }
+.track-card:nth-child(6) { animation-delay: 400ms; }
+
+/* Override scroll-driven — use boxing entrance instead */
+@supports (animation-timeline: view()) {
+  .track-card:nth-child(odd) {
+    animation: roundCardLeft 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+    animation-timeline: view();
+    animation-range: entry 0% entry 25%;
+  }
+  .track-card:nth-child(even) {
+    animation: roundCardRight 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+    animation-timeline: view();
+    animation-range: entry 0% entry 25%;
+  }
+}
+
+/* ===== DIAL KNOB GLOW TRAIL ===== */
+.dial-knob {
+  filter: drop-shadow(0 0 12px rgba(255,255,255,0.7)) drop-shadow(0 0 24px rgba(255,215,0,0.4));
+}
+.dial-arc {
+  filter: drop-shadow(0 0 10px currentColor) drop-shadow(0 0 20px currentColor);
+}
+.dial-value {
+  text-shadow: 0 0 40px rgba(255, 255, 255, 0.3), 0 0 80px rgba(255, 215, 0, 0.2);
+}
+
+/* ===== LOCK BUTTON — championship belt feel ===== */
+.btn-lock {
+  font-size: 1.2rem;
+  padding: 18px;
+  border: 2px solid rgba(255, 215, 0, 0.3);
+  text-shadow: 0 1px 0 rgba(0,0,0,0.3);
+  background: linear-gradient(180deg, #ffd700, #e6c200);
+  box-shadow: 0 4px 20px rgba(255, 215, 0, 0.25), inset 0 1px 0 rgba(255,255,255,0.3);
+}
+.btn-lock:active {
+  transform: scale(0.97);
+  box-shadow: 0 2px 10px rgba(255, 215, 0, 0.15);
+}
+.btn-lock.locked {
+  background: linear-gradient(180deg, #00ff41, #00cc33) !important;
+  border-color: rgba(0, 255, 65, 0.5) !important;
+  box-shadow: 0 0 30px rgba(0, 255, 65, 0.5), inset 0 1px 0 rgba(255,255,255,0.3) !important;
+}
+
+/* ===== JAM OVERLAY — enhanced screen shake ===== */
+.jam-overlay {
+  backdrop-filter: blur(4px);
+}
+.jam-quote {
+  font-size: clamp(2.5rem, 10vw, 5rem);
+  letter-spacing: 0.04em;
+}
+
+/* ===== CRAVING FAB — boxing glove energy ===== */
+.craving-fab {
+  font-weight: 900;
+  border-width: 2px;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+}
+
+/* ===== NAV — bottom ring border ===== */
+.bottom-nav {
+  border-top: 2px solid rgba(255, 215, 0, 0.15);
+}
+.nav-btn.active::after {
+  background: var(--accent);
+  box-shadow: 0 0 8px var(--accent);
+  height: 3px;
+  width: 24px;
+}
+.nav-btn.active {
+  color: var(--accent);
+}
+
+/* ===== DASHBOARD — bolder numbers ===== */
+.dash-weight-lost {
+  font-size: clamp(3rem, 10vw, 4.5rem) !important;
+  font-weight: 200 !important;
+  text-shadow: 0 0 40px currentColor;
+}
+.dash-hero-time {
+  text-shadow: 0 0 30px rgba(255, 255, 255, 0.3);
+}
+.dash-streak-num {
+  font-size: clamp(2.5rem, 8vw, 3.5rem) !important;
+}
+.dash-compact-value {
+  text-shadow: 0 0 15px currentColor;
+}
+
+/* ===== MILESTONE BANNER — full ring ropes ===== */
+.milestone-banner {
+  border: 2px solid rgba(255, 215, 0, 0.3);
+  text-align: center;
+  padding: 20px;
+}
+.milestone-number {
+  font-family: 'SF Mono', monospace;
+  font-size: 2rem;
+  text-shadow: 0 0 30px var(--accent);
+}
+
 /* ===== REDUCED MOTION ===== */
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
@@ -1211,12 +1653,14 @@ html, body {
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
   }
-  .dash-enter {
+  .dash-enter, .ko-slam, .mc-done-check, .track-card {
     opacity: 1 !important;
     transform: none !important;
     animation: none !important;
   }
+  .screen-shake { animation: none !important; }
   .craving-fab { animation: none; }
+  .dash-streak-num, .streak-number-sm { animation: none; text-shadow: none; }
   .water-bar-fill::after { animation: none; display: none; }
   ::view-transition-old(root),
   ::view-transition-new(root) {

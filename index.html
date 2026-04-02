@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="theme-color" content="#0b0e14">
+  <meta name="theme-color" content="#000000">
   <link rel="manifest" href="manifest.json">
   <link rel="apple-touch-icon" href="icons/icon-192.png">
   <link rel="stylesheet" href="css/style.css">
@@ -212,13 +212,25 @@
           <div id="water-insight-slot"></div>
         </div>
 
-        <!-- Weight -->
+        <!-- Weight — Dial -->
         <div id="track-weight" class="track-card">
           <h2 class="track-title">Weight</h2>
-          <div class="weight-input-row">
-            <input type="number" id="weight-input" class="weight-input" inputmode="decimal" step="0.1" placeholder="lbs">
-            <button class="btn btn-primary" id="weight-log">Log</button>
+          <div class="dial-container" id="weight-dial-svg-wrap">
+            <svg viewBox="0 0 240 240" class="dial-svg" id="weight-dial-svg">
+              <circle class="dial-track" cx="120" cy="120" r="100"/>
+              <circle class="dial-arc" cx="120" cy="120" r="100" id="dial-arc"/>
+              <circle class="dial-knob" cx="120" cy="20" r="14" id="dial-knob"/>
+            </svg>
+            <div class="dial-display">
+              <div class="dial-value" id="dial-value">---</div>
+              <div class="dial-unit">LBS</div>
+            </div>
           </div>
+          <div class="dial-adjust">
+            <button class="btn btn-dial-adj" id="dial-down">&minus;0.1</button>
+            <button class="btn btn-dial-adj" id="dial-up">+0.1</button>
+          </div>
+          <button class="btn-lock" id="weight-lock">LOCK IT IN</button>
           <div id="weight-stats" class="weight-stats hidden"></div>
           <div id="weight-insight-slot"></div>
           <div class="weight-chart-container">
@@ -350,6 +362,17 @@
         <span class="nav-label">Settings</span>
       </button>
     </nav>
+  </div>
+
+  <!-- NBA JAM Celebration Overlay -->
+  <div id="jam-overlay" class="jam-overlay hidden">
+    <div class="jam-flames">
+      <div class="flame"></div>
+      <div class="flame"></div>
+      <div class="flame"></div>
+    </div>
+    <div class="jam-quote" id="jam-quote"></div>
+    <div class="jam-detail" id="jam-detail"></div>
   </div>
 
   <script src="js/vendor/chart.min.js"></script>

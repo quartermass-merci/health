@@ -183,7 +183,7 @@ function renderWeight() {
   const predicted = predictGoalDate(weights, profile.goalWeight);
 
   el.innerHTML = `<div class="dash-weight" data-nav="track">
-    <div class="dash-weight-lost">${totalLost > 0 ? '-' : ''}${Math.abs(totalLost).toFixed(1)}</div>
+    <div class="dash-weight-lost ko-slam">${totalLost > 0 ? '-' : ''}${Math.abs(totalLost).toFixed(1)}</div>
     <div class="dash-weight-lost-label">lbs ${totalLost >= 0 ? 'lost' : 'gained'} from ${profile.startWeight}</div>
     <div class="dash-weight-row">
       <div class="dash-weight-stat">
@@ -284,7 +284,7 @@ function fireMilestoneParticles() {
   canvas.height = window.innerHeight;
   const ctx = canvas.getContext('2d');
 
-  const colors = ['#f59e0b', '#fbbf24', '#34d399', '#38bdf8', '#f472b6', '#f1f3f8'];
+  const colors = ['#ffd700', '#ffe44d', '#00ff41', '#00d4ff', '#ff1a5e', '#fff'];
   const particles = [];
 
   for (let i = 0; i < 40; i++) {

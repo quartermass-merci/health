@@ -1,4 +1,4 @@
-const CACHE_NAME = 'metabolic-tracker-v8';
+const CACHE_NAME = 'metabolic-tracker-v10';
 const ASSETS = [
   './',
   './index.html',

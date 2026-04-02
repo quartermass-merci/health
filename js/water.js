@@ -39,6 +39,16 @@ function bindWaterButtons() {
       }
       saveActiveDay(today);
       renderWater();
+
+      // Hit flash on bar fill
+      if (amount > 0) {
+        const fill = document.getElementById('water-bar-fill');
+        if (fill) {
+          fill.style.filter = 'brightness(2.5)';
+          setTimeout(() => { fill.style.filter = ''; }, 150);
+        }
+      }
+
       showInlineInsight('water-insight-slot', getWaterInsight(today, profile));
     };
   });

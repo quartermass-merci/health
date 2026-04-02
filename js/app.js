@@ -15,6 +15,60 @@ import { initDashboard } from './dashboard.js';
 let currentSection = null;
 let toastTimer = null;
 
+// ===== NBA JAM CELEBRATION SYSTEM =====
+const JAM_QUOTES = [
+  "HE'S HEATING UP!",
+  "HE'S ON FIRE!",
+  "RAZZLE DAZZLE!",
+  "BOOMSHAKALAKA!",
+  "SLAMS IT IN!",
+  "WOOOOOAHHHH, KABOOM!"
+];
+
+export function showCelebration(lbsLost) {
+  const overlay = document.getElementById('jam-overlay');
+  const quoteEl = document.getElementById('jam-quote');
+  const detailEl = document.getElementById('jam-detail');
+  if (!overlay || !quoteEl) return;
+
+  const quote = JAM_QUOTES[Math.floor(Math.random() * JAM_QUOTES.length)];
+  quoteEl.textContent = quote;
+  if (detailEl) {
+    detailEl.textContent = lbsLost > 0 ? `-${lbsLost.toFixed(1)} LBS` : '';
+  }
+
+  overlay.classList.remove('hidden');
+
+  // Screen shake on the app behind the overlay
+  const app = document.getElementById('app');
+  if (app) {
+    app.classList.add('screen-shake');
+    setTimeout(() => app.classList.remove('screen-shake'), 500);
+  }
+
+  const dismiss = () => {
+    overlay.classList.add('hidden');
+    overlay.onclick = null;
+  };
+  setTimeout(dismiss, 3500);
+  overlay.onclick = dismiss;
+}
+
+export function showStreakCelebration(streak) {
+  const overlay = document.getElementById('jam-overlay');
+  const quoteEl = document.getElementById('jam-quote');
+  const detailEl = document.getElementById('jam-detail');
+  if (!overlay || !quoteEl) return;
+
+  quoteEl.textContent = streak >= 30 ? "HE'S ON FIRE!" : "HE'S HEATING UP!";
+  if (detailEl) detailEl.textContent = `${streak} DAY STREAK`;
+
+  overlay.classList.remove('hidden');
+  const dismiss = () => { overlay.classList.add('hidden'); overlay.onclick = null; };
+  setTimeout(dismiss, 3500);
+  overlay.onclick = dismiss;
+}
+
 // Toast system (kept for settings/export confirmations)
 export function showInsight(message, icon = '💡') {
   const toast = document.getElementById('insight-toast');

@@ -3,7 +3,7 @@
 
 import { getActiveDay, saveActiveDay, getDay, saveDay, yesterdayStr, getCarbStreak, getAfter6Streak, getRecentDays } from './store.js';
 import { getCarbInsight } from './insights.js';
-import { showInlineInsight } from './app.js';
+import { showInlineInsight, showStreakCelebration } from './app.js';
 
 export function initMorningCheckin() {
   const today = getActiveDay();
@@ -164,6 +164,11 @@ function checkCompletion() {
     setTimeout(() => {
       const streak = getCarbStreak();
       showDoneState(today.morningCheckin, streak);
+
+      // NBA JAM celebration for streak milestones
+      if (streak > 0 && streak % 10 === 0) {
+        setTimeout(() => showStreakCelebration(streak), 800);
+      }
     }, 600);
   }
 }
@@ -217,5 +222,14 @@ function showDoneState(checkin, streak) {
       <span class="streak-number-sm">${streak}</span>
       <span class="streak-label-sm">day low-carb streak</span>
     </div>
+    <button class="btn btn-outline" id="mc-edit-btn" style="margin-top:12px;width:100%;font-size:0.8rem">Edit answers</button>
   `;
+
+  document.getElementById('mc-edit-btn').onclick = () => {
+    // Reset done state so user can re-answer
+    const today = getActiveDay();
+    today.morningCheckinDone = false;
+    saveActiveDay(today);
+    initMorningCheckin();
+  };
 }

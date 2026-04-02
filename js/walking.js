@@ -56,7 +56,16 @@ function bindWalkingButtons() {
       }
       saveActiveDay(today);
       renderWalking();
-      if (min > 0) showInlineInsight('walking-insight-slot', getWalkingInsight(today, profile));
+
+      // Hit flash on bar fill
+      if (min > 0) {
+        const fill = document.getElementById('walking-fill');
+        if (fill) {
+          fill.style.filter = 'brightness(2.5)';
+          setTimeout(() => { fill.style.filter = ''; }, 150);
+        }
+        showInlineInsight('walking-insight-slot', getWalkingInsight(today, profile));
+      }
     };
   });
 }
